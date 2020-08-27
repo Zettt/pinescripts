@@ -1,57 +1,30 @@
+// ================================================================================================================================================================================
+// RSI VWMA INDICATOR
+// ================================================================================================================================================================================
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
-// © Xaviz
-
-//#####©ÉÉÉÉ¶N###############################################
-//####*..´´´´´´,,,»ëN########################################
-//###ë..´´´´´´,,,,,,''%©#####################################
-//###'´´´´´´,,,,,,,'''''?¶###################################
-//##o´´´´´´,,,,,,,''''''''*©#################################
-//##'´´´´´,,,,,,,'''''''^^^~±################################
-//#±´´´´´,,,,,,,''''''''^í/;~*©####æ%;í»~~~~;==I±N###########
-//#»´´´´,,,,,,'''''''''^;////;»¶X/í~~/~~~;=~~~~~~~~*¶########
-//#'´´´,,,,,,''''''''^^;////;%I^~/~~/~~~=~~~;=?;~~~~;?ë######
-//©´´,,,,,,,''''''''^^~/////X~/~~/~~/~~»í~~=~~~~~~~~~~^;É####
-//¶´,,,,,,,''''''''^^^;///;%;~/~~;í~~»~í?~?~~~?I/~~~~?*=íÑ###
-//N,,,,,,,'''''''^^^^^///;;o/~~;;~~;£=»í»;IX/=~~~~~~^^^^'*æ##
-//#í,,,,,''''''''^^^^^;;;;;o~»~~~~íX//~/»~;í?IíI»~~^/*?'''=N#
-//#%,,,'''''''''^^^^^^í;;;;£;~~~//»I»/£X/X/»í*&~~~^^^^'^*~'É#
-//#©,,''''''''^^^^^^^^~;;;;&/~/////*X;í;o*í»~=*?*===^'''''*£#
-//##&''''''''^^^^^^^^^^~;;;;X=í~~~»;;;/~;í»~»±;^^^^^';=''''É#
-//##N^''''''^^^^^^^^^^~~~;;;;/£;~~/»~~»~~///o~~^^^^''''?^',æ#
-//###Ñ''''^^^^^^^^^^^~~~~~;;;;;í*X*í»;~~IX?~~^^^^/?'''''=,=##
-//####X'''^^^^^^^^^^~~~~~~~~;;íííííí~~í*=~~~~Ií^'''=''''^»©##
-//#####£^^^^^^^^^^^~~~~~~~~~~~íííííí~~~~~*~^^^;/''''='',,N###
-//######æ~^^^^^^^^~~~~~~~~~~~~~~íííí~~~~~^*^^^'=''''?',,§####
-//########&^^^^^^~~~~~~~~~~~~~~~~~~~~~~~^^=^^''=''''?,íN#####
-//#########N?^^~~~~~~~~~~~~~~~~~~~~~~~~^^^=^''^?''';í@#######
-//###########N*~~~~~~~~~~~~~~~~~~~~~~~^^^*'''^='''/É#########
-//##############@;~~~~~~~~~~~~~~~~~~~^^~='''~?'';É###########
-//#################É=~~~~~~~~~~~~~~^^^*~'''*~?§##############
-//#####################N§£I/~~~~~~»*?~»o§æN##################
+// Original by © Xaviz
+// Rewritten by Zettt
+// Xaviz' original version is based on the VWAP. This modification calculate the RSI of a volume-weight moving average instead, since the VWAP does not work well on higher time frames.
+// It is recommended to adjust the settings.
 
 //@version=4
-strategy("RSI-VWAP INDICATOR", overlay=false, initial_capital = 1000, currency = "USD", pyramiding = 5, default_qty_type = strategy.cash, default_qty_value = 1000, commission_value = 0.04)
-
-// ================================================================================================================================================================================
-// RSI VWAP INDICATOR
-// ================================================================================================================================================================================
+// strategy("RSI-VWMA INDICATOR", overlay=false, initial_capital = 1000, currency = "USD", pyramiding = 5, default_qty_type = strategy.cash, default_qty_value = 1000, commission_value = 0.04)
+study(title="RSI-VWMA", shorttitle="RSI-VWMA", overlay=true)
 
 // Initial inputs
-Act_RSI_VWAP = input(true, "RSI VOLUME WEIGHTED AVERAGE PRICE")
-RSI_VWAP_length = input(17, "RSI-VWAP LENGTH")
-RSI_VWAP_overSold = input(19, "RSI-VWAP OVERSOLD", type=input.float)
-RSI_VWAP_overBought = input(80, "RSI-VWAP OVERBOUGHT", type=input.float)
+//Act_RSI_VWMA = input(true, "RSI VOLUME WEIGHTED AVERAGE PRICE")
+RSI_length = input(20, "RSI Length")
+RSI_VWMA_oversold = input(20, "RSI Oversold Level", type=input.float)
+RSI_VWMA_overbought = input(80, "RSI Overbought Level", type=input.float)
+VWMA_length = input(20, "VWMA Length")
 
-// RSI with VWAP as source
-RSI_VWAP = rsi(vwap(close), RSI_VWAP_length)
+// RSI with VWMA as source
+RSI_VWMA = rsi(vwma(close, VWMA_length), RSI_length)
 
 // Plotting, overlay=false
-r=plot(RSI_VWAP, color = RSI_VWAP > RSI_VWAP_overBought ? color.red : RSI_VWAP < RSI_VWAP_overSold ? color.lime : color.blue, title="rsi", linewidth=2, style=plot.style_line)
-h1=plot(RSI_VWAP_overBought, color = color.gray, style=plot.style_stepline)
-h2=plot(RSI_VWAP_overSold, color = color.gray, style=plot.style_stepline)
-fill(r,h1, color = RSI_VWAP > RSI_VWAP_overBought ? color.red : na, transp = 60)
-fill(r,h2, color = RSI_VWAP < RSI_VWAP_overSold ? color.lime : na, transp = 60)
+r=plot(RSI_VWMA, title="RSI-VWMA", color = RSI_VWMA > RSI_VWMA_overbought ? color(#e57373) : RSI_VWMA < RSI_VWMA_oversold ? color(#4db6ac) : color.blue, title="rsi", linewidth=1, style=plot.style_line)
+h1=plot(RSI_VWMA_overbought, title="Overbought", color = color.silver, style=plot.style_stepline)
+h2=plot(RSI_VWMA_oversold, title="Oversold", color = color.silver, style=plot.style_stepline)
+fill(r, h1, color = RSI_VWMA > RSI_VWMA_overbought ? color(#e57373) : na, transp = 60, title="Overbought Fill")
+fill(r, h2, color = RSI_VWMA < RSI_VWMA_oversold ? color(#4db6ac) : na, transp = 60, title="Oversold Fill")
 
-// Long only Backtest
-strategy.entry("Long", strategy.long, when = (crossover(RSI_VWAP, RSI_VWAP_overSold)))
-strategy.close("Long", when = (crossunder(RSI_VWAP, RSI_VWAP_overBought)))
