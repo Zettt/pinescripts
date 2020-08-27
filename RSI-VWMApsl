@@ -8,11 +8,9 @@
 // It is recommended to adjust the settings.
 
 //@version=4
-// strategy("RSI-VWMA INDICATOR", overlay=false, initial_capital = 1000, currency = "USD", pyramiding = 5, default_qty_type = strategy.cash, default_qty_value = 1000, commission_value = 0.04)
-study(title="RSI-VWMA", shorttitle="RSI-VWMA", overlay=true)
+study(title="RSI-VWMA", shorttitle="RSI-VWMA")
 
 // Initial inputs
-//Act_RSI_VWMA = input(true, "RSI VOLUME WEIGHTED AVERAGE PRICE")
 RSI_length = input(20, "RSI Length")
 RSI_VWMA_oversold = input(20, "RSI Oversold Level", type=input.float)
 RSI_VWMA_overbought = input(80, "RSI Overbought Level", type=input.float)
@@ -27,4 +25,5 @@ h1=plot(RSI_VWMA_overbought, title="Overbought", color = color.silver, style=plo
 h2=plot(RSI_VWMA_oversold, title="Oversold", color = color.silver, style=plot.style_stepline)
 fill(r, h1, color = RSI_VWMA > RSI_VWMA_overbought ? color(#e57373) : na, transp = 60, title="Overbought Fill")
 fill(r, h2, color = RSI_VWMA < RSI_VWMA_oversold ? color(#4db6ac) : na, transp = 60, title="Oversold Fill")
+
 
