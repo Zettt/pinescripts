@@ -24,4 +24,18 @@ plot(k <= upTHR or k >= downTHR ? k : na, title="%K", style=plot.style_linebr, c
 plot(d >= upTHR or d <= downTHR ? d : na, title="%D", style=plot.style_linebr, color=#e65100, linewidth=2, transp=35)
 plot(d <= upTHR or d >= downTHR ? d : na, title="%D", style=plot.style_linebr, color=#ff9800, linewidth=1, transp=35)
 
+// fill background
 fill(h0, h1, color=#9915FF, title="Background", transp=100)
+
+// Overbought Stochs crosses
+showOnlyFirstSignal = true
+upcross = k >= d and k >= downTHR and d <= downTHR
+downcross = k <= d and k <= upTHR and d >= upTHR
+
+
+showLong = showOnlyFirstSignal ? upcross and not upcross[1] : upcross
+showShort = showOnlyFirstSignal ? downcross and not downcross[1] : downcross
+
+bgcolor(showLong ? #81c784 : na , title="macd Background", transp=85)
+bgcolor(showShort ? #e57373 : na , title="macd Background", transp=85)
+
