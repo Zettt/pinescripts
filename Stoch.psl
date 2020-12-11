@@ -1,0 +1,27 @@
+// ================================================================================================================================================================================
+// Stochastic indicator with overbought/oversold zones 
+// ================================================================================================================================================================================
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// Original by TradingView
+// Rewritten by Zettt
+// This version only differs from the original TradingView version in the way that it displays thicker Stochs lines when over the upTHR or below the downTHR.
+
+//@version=4
+study(title="Stochastic", shorttitle="Stoch", format=format.price, precision=2, resolution="")
+periodK = input(14, title="K", minval=1, type=input.integer)
+periodD = input(3, title="D", minval=1, type=input.integer)
+smoothK = input(3, title="Smooth", minval=1, type=input.integer)
+upTHR = input(80, title="Up Threshold", minval=0, type=input.integer)
+downTHR = input(20, title="Down Threshold", minval=0, type=input.integer)
+k = sma(stoch(close, high, low, periodK), smoothK)
+d = sma(k, periodD)
+h0 = hline(upTHR, "Upper Band", color=#606060)
+h1 = hline(downTHR, "Lower Band", color=#606060)
+
+// we need to plot k and d separate because linewidth can't be a mutable variable
+plot(k >= upTHR or k <= downTHR ? k : na, title="%K", style=plot.style_linebr, color=#0d47a1, linewidth=2)
+plot(k <= upTHR or k >= downTHR ? k : na, title="%K", style=plot.style_linebr, color=#2196f3, linewidth=1)
+plot(d >= upTHR or d <= downTHR ? d : na, title="%D", style=plot.style_linebr, color=#e65100, linewidth=2, transp=35)
+plot(d <= upTHR or d >= downTHR ? d : na, title="%D", style=plot.style_linebr, color=#ff9800, linewidth=1, transp=35)
+
+fill(h0, h1, color=#9915FF, title="Background", transp=100)
