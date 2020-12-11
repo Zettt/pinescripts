@@ -1,0 +1,48 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// Code: © Andreas @Zettt Zeitler
+// 2020-04-15
+// v1
+
+//@version=4
+study(title="Hardcoded Moving Averages", shorttitle="Hardcoded MA's", overlay=true)
+
+// Menu
+//
+custom_res = input(title="Resolution", type=input.resolution, defval="1D")
+ma_base = input(title="Moving Average Base", options=["Simple", "Exponential", "Volume", "Weighted", "Hull"], defval="Simple")
+sma1_len = input(10, minval=1, title="MA 1 Length", defval=10)
+sma2_len = input(20, minval=1, title="MA 2 Length", defval=20)
+sma3_len = input(50, minval=1, title="MA 3 Length", defval=50)
+sma4_len = input(100, minval=1, title="MA 4 Length", defval=100)
+sma5_len = input(200, minval=1, title="MA 5 Length", defval=200)
+
+// set up plotting of the moving averages
+src = security(syminfo.tickerid, custom_res, close)
+
+// returns ma value by type and length
+ma(src, type, length) =>
+    // wrapper max(1,length)) prevents ema(src, 0) type errors because all cond branches are always fully executed even when length == 0 (there's no fast cond evaluation)
+    len = max(1,length)
+    // for proper line wrapping/continuation you need indentation > multiple of 4 (4 spaces or 1 tab), i.e. 5 spaces
+    // swma has a fixed length = 4, alma has its own smoothing params
+    type == "Simple"? sma(src, len) :
+         type == "Exponential"? ema(src, len) :
+             type == "Weighted"? wma(src, len) :
+                 type == "Volume"? vwma(src, len) :
+                     type == "Hull"? hma(src, len) : na
+
+
+sma1 = sma1_len > 0 ? security(syminfo.tickerid, custom_res, ma(close, ma_base, sma1_len)) : na
+sma2 = sma2_len > 0 ? security(syminfo.tickerid, custom_res, ma(close, ma_base, sma2_len)) : na
+sma3 = sma3_len > 0 ? security(syminfo.tickerid, custom_res, ma(close, ma_base, sma3_len)) : na
+sma4 = sma4_len > 0 ? security(syminfo.tickerid, custom_res, ma(close, ma_base, sma4_len)) : na
+sma5 = sma5_len > 0 ? security(syminfo.tickerid, custom_res, ma(close, ma_base, sma5_len)) : na
+
+plot(sma1, color=#DD8EAD, linewidth=1, transp=0, style=plot.style_line, title="MA 1")
+plot(sma2, color=#BB6083, linewidth=1, transp=0, style=plot.style_line, title="MA 2")
+plot(sma3, color=#C3185B, linewidth=1, transp=0, style=plot.style_line, title="MA 3")
+plot(sma4, color=#A42959, linewidth=1, transp=0, style=plot.style_line, title="MA 4")
+plot(sma5, color=#732C48, linewidth=1, transp=0, style=plot.style_line, title="MA 5")
+
+
+
