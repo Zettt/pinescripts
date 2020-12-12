@@ -1,0 +1,63 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Zettt
+
+//@version=4
+study("Peak Reversal", shorttitle="Peak Reversal", overlay=true)
+
+// showOnlyFirstSignal = input(true, "Show only first signal", input.bool)
+showOnlyFirstSignal = true
+
+keltnerMultiplier = input(title="Keltner Bands Multiplier", defval=1.25, minval=1, type=input.float)
+// smoothing = input(title="Smoothing", defval="RMA", options=["RMA", "SMA", "EMA", "WMA"])
+// ma_function(source, length) =>
+// 	if smoothing == "RMA"
+// 		rma(source, length)
+// 	else
+// 		if smoothing == "SMA"
+// 			sma(source, length)
+// 		else
+// 			if smoothing == "EMA"
+// 				ema(source, length)
+// 			else
+// 				wma(source, length)
+// plot(ma_function(tr(true), length), title = "ATR", color=#991515, transp=0)
+length = 14
+//plot(ema(close, 21) - (rma(tr(true), length) * 1.25), title="Upper Band", color=#991515, display=display.none)
+//plot(ema(close, 21) + (rma(tr(true), length) * 1.25), title="Lower Band", color=#991515, display=display.none)
+
+
+// long/short when the candle body (not high low) is outside of Keltner channel extremes
+downBand = ( ema(close, 21) - (rma(tr(true), length) * keltnerMultiplier) )
+upBand = ( ema(close, 21) + (rma(tr(true), length) * keltnerMultiplier) )
+
+// long/short condition only when the previous candle is a free bar, and the current candle opened outside, but closed inside
+longRejection = close[1] <= downBand and low[1] <= downBand and low <= downBand and close >= downBand
+shortRejection = close[1] >= upBand and high[1] >= upBand and high >= upBand and close <= upBand
+
+showLong = showOnlyFirstSignal ? longRejection and not longRejection[1] : longRejection
+showShort = showOnlyFirstSignal ? shortRejection and not shortRejection[1] : shortRejection
+plotshape(showLong, title="Reversal 🔺", style=shape.xcross, size=size.tiny, color=#81c784, transp=75, location=location.belowbar)
+plotshape(showShort, title="Reversal 🔻", style=shape.xcross, size=size.tiny, color=#e57373, transp=75, location=location.abovebar)
+
+// Plot breakouts
+longBreakout = close >= upBand and open <= upBand
+shortBreakout = close <= downBand and open >= downBand
+
+showLongBreakout = showOnlyFirstSignal ? longBreakout and not longBreakout[1] : longBreakout
+showShortBreakout = showOnlyFirstSignal ? shortBreakout and not shortBreakout[1] : shortBreakout
+
+plotshape(showLongBreakout, title="Breakout", style=shape.triangleup, size=size.tiny, color=#81c784, transp=80, location=location.abovebar, display=display.none)
+plotshape(showShortBreakout, title="Breakdown", style=shape.triangledown, size=size.tiny, color=#e57373, transp=80, location=location.belowbar, display=display.none)
+
+// Alerts
+alertcondition(condition=showLong, title="Reversal 🔺", message="Reversal 🔺")
+alertcondition(condition=showShort, title="Reversal 🔻", message="Reversal 🔺")
+alertcondition(condition=showLong or showShort, title="Reversal Any", message="Reversal Any")
+
+alertcondition(condition=showLongBreakout, title="Breakout", message="Breakout")
+alertcondition(condition=showShortBreakout, title="Breakdown", message="Breakdown")
+alertcondition(condition=showLongBreakout or showShortBreakout, title="Breakout or Down", message="Breakout or Down")
+
+alertcondition(condition=showLong or showShort or showLongBreakout or showShortBreakout, title="Peak Reversal Any Change", message="Peak Reversal Any")
+
+
