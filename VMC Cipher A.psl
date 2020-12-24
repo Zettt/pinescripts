@@ -137,7 +137,7 @@ plotshape(blueTriangle, style=shape.triangleup, color=#0064ff, location=location
 plotshape(redDiamond, style=shape.diamond, color=#ff0000, location=location.abovebar, size=size.tiny, title="Red Diamond", transp=25)
 plotshape(bullCandle, style=shape.diamond, color=#fbc02d, location=location.abovebar, size=size.tiny, title="Bull candle", transp=75)
 plotshape(bloodDiamond, style=shape.diamond, color=#ff0000, location=location.abovebar, size=size.small, title="Blood Diamond", transp=15)
-plotshape(yellowCross, style=shape.xcross, color=color.yellow, location=location.abovebar, size=size.small, title="Yellow Cross", transp=25)
+plotshape(yellowCross, style=shape.xcross, color=#fbc02d, location=location.abovebar, size=size.small, title="Yellow Cross", transp=25)
 // } DRAW
   
   
