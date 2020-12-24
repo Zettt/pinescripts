@@ -108,8 +108,10 @@ blueTriangleUp = crossover(ema2, ema3)
 blueTriangleDown = crossover(ema3, ema2)
 redDiamond = wtGreenCross and wtCrossDown
 greenDiamond = wtRedCross and wtCrossUp
-yellowCross = redDiamond and wt2 < 45 and wt2 > osLevel3 and rsi < 30 and rsi > 15 and rsiMFI < -5
-bloodDiamond = redDiamond and redCross
+yellowCrossUp = redDiamond and wt2 < 45 and wt2 > osLevel3 and rsi < 30 and rsi > 15 //and rsiMFI < -5
+yellowCrossDown = greenDiamond and wt2 > 55 and wt2 < obLevel3 and rsi < 70 and rsi < 85 //and rsiMFI > 95
+dumpDiamond = redDiamond and redCross
+moonDiamond = greenDiamond and greenCross
 bullCandle = open > ema2 and open > ema8 and (close[1] > open[1]) and (close > open) and not redDiamond and not redCross
 bearCandle = open < ema2 and open < ema8 and (close[1] < open[1]) and (close < open) and not greenDiamond and not redCross
 
@@ -136,24 +138,27 @@ fill(p2, p8, color = #363a45, transp = 85)
 // SHAPES
 
 plotshape(longEma, style=shape.circle, color=#009688, location=location.abovebar, size=size.tiny, title="Long EMA Signal", transp=50)
-plotshape(shortEma, style=shape.circle, color=#f44336, location=location.belowbar, size=size.tiny, title="Short EMA Signal", transp=50)
-plotshape(redCross, style=shape.xcross, color=#ef5350, location=location.abovebar, size=size.tiny, title="Red Cross", transp=50)
-plotshape(greenCross, style=shape.xcross, color=#66bb6a, location=location.abovebar, size=size.tiny, title="Green Cross", transp=50)
-plotshape(blueTriangleUp, style=shape.triangleup, color=#0064ff, location=location.abovebar, size=size.tiny, title="Blue Triangle Bull", transp=50)
+plotshape(shortEma, style=shape.circle, color=#f44336, location=location.abovebar, size=size.tiny, title="Short EMA Signal", transp=50)
+plotshape(redCross, style=shape.xcross, color=#ef5350, location=location.abovebar, size=size.tiny, title="Red Cross", transp=50, display=display.none)
+plotshape(greenCross, style=shape.xcross, color=#66bb6a, location=location.abovebar, size=size.tiny, title="Green Cross", transp=50, display=display.none)
+plotshape(blueTriangleUp, style=shape.triangleup, color=#0064ff, location=location.belowbar, size=size.tiny, title="Blue Triangle Bull", transp=50)
 plotshape(blueTriangleDown, style=shape.triangledown, color=#0064ff, location=location.belowbar, size=size.tiny, title="Blue Triangle Bear", transp=50)
-plotshape(redDiamond, style=shape.diamond, color=#ff0000, location=location.abovebar, size=size.tiny, title="Red Diamond", transp=25)
+plotshape(redDiamond, style=shape.diamond, color=#ef9a9a, location=location.abovebar, size=size.tiny, title="Red Diamond", transp=25, display=display.none)
+plotshape(greenDiamond, style=shape.diamond, color=#a5d6a7, location=location.belowbar, size=size.tiny, title="Green Diamond", transp=25, display=display.none)
 plotshape(bullCandle, style=shape.diamond, color=#00796b, location=location.abovebar, size=size.tiny, title="Bull Candle", transp=75, display=display.none)
 plotshape(bearCandle, style=shape.diamond, color=#d32f2f, location=location.belowbar, size=size.tiny, title="Bear Candle", transp=75, display=display.none)
-plotshape(bloodDiamond, style=shape.diamond, color=#ff0000, location=location.abovebar, size=size.small, title="Blood Diamond", transp=15)
-plotshape(yellowCross, style=shape.xcross, color=#fbc02d, location=location.abovebar, size=size.small, title="Yellow Cross", transp=25)
+plotshape(dumpDiamond, style=shape.diamond, color=#b71c1c, location=location.abovebar, size=size.small, title="Dump Diamond", transp=15, display=display.none)
+plotshape(moonDiamond, style=shape.diamond, color=#1b5e20, location=location.belowbar, size=size.small, title="Moon Diamond", transp=15, display=display.none)
+plotshape(yellowCrossUp, style=shape.xcross, color=#fbc02d, location=location.abovebar, size=size.small, title="Yellow Cross Up", transp=25)
+plotshape(yellowCrossDown, style=shape.xcross, color=#fbc02d, location=location.belowbar, size=size.small, title="Yellow Cross Down", transp=25)
 // } DRAW
   
   
 // ALERTS {
 alertcondition(condition=redDiamond, title="Red Diamond", message="Red Diamond")
-alertcondition(condition=bloodDiamond, title="Blood Diamond", message="Blood Diamond")
+alertcondition(condition=dumpDiamond, title="Dump Diamond", message="Dump Diamond")
 alertcondition(condition=blueTriangleUp or blueTriangleDown, title="Blue Triangle", message="Blue Triangle")
-alertcondition(condition=yellowCross, title="Yellow X", message="Yellow X")
+alertcondition(condition=yellowCrossUp, title="Yellow X", message="Yellow X")
 alertcondition(condition=redCross, title="Red X", message="Red X")
 alertcondition(condition=greenCross, title="Green X", message="Green X")
 alertcondition(condition=shortEma, title="Short Signal", message="Short Signal")
