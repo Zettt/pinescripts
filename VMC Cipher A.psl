@@ -91,7 +91,8 @@ rsi = rsi(rsiSRC, rsiLen)
 // WaveTrend Conditions
 wtOverSold = wt2 <= osLevel
 wtOverBought = wt2 >= obLevel
-wtCross = cross(wt1, wt2)
+wtGreenCross = cross(wt1, wt2)
+wtRedCross = cross(wt2, wt1)
 wtCrossUp = wt2 - wt1 <= 0
 wtCrossDown = wt2 - wt1 >= 0
 
@@ -102,11 +103,15 @@ rsiMFI = f_rsimfi(rsiMFIperiod, rsiMFIMultiplier, timeframe.period)
 longEma = crossover(ema2, ema8)
 shortEma = crossover(ema8, ema2)
 redCross = crossunder(ema1, ema2)
-blueTriangle = crossover(ema2, ema3)
-redDiamond = wtCross and wtCrossDown
+greenCross = crossunder(ema2, ema1)
+blueTriangleUp = crossover(ema2, ema3)
+blueTriangleDown = crossover(ema3, ema2)
+redDiamond = wtGreenCross and wtCrossDown
+greenDiamond = wtRedCross and wtCrossUp //new
 yellowCross = redDiamond and wt2 < 45 and wt2 > osLevel3 and rsi < 30 and rsi > 15 and rsiMFI < -5
 bloodDiamond = redDiamond and redCross
 bullCandle = open > ema2 and open > ema8 and (close[1] > open[1]) and (close > open) and not redDiamond and not redCross
+bearCandle = open < ema2 and open < ema8 and (close[1] < open[1]) and (close < open) and not greenDiamond and not redCross
 
 // } CALCULATE INDICATORS
 
@@ -130,12 +135,15 @@ fill(p2, p8, color = #363a45, transp = 85)
 
 // SHAPES
 
-plotshape(longEma, style=shape.circle, color=#009688, location=location.belowbar, size=size.tiny, title="Long EMA Signal", transp=50)
+plotshape(longEma, style=shape.circle, color=#009688, location=location.abovebar, size=size.tiny, title="Long EMA Signal", transp=50)
 plotshape(shortEma, style=shape.circle, color=#f44336, location=location.belowbar, size=size.tiny, title="Short EMA Signal", transp=50)
-plotshape(redCross, style=shape.xcross, color=#ff0000, location=location.abovebar, size=size.tiny, title="Red cross", transp=50)
-plotshape(blueTriangle, style=shape.triangleup, color=#0064ff, location=location.abovebar, size=size.small, title="Blue Triangle", transp=50)
+plotshape(redCross, style=shape.xcross, color=#ef5350, location=location.abovebar, size=size.tiny, title="Red Cross", transp=50)
+plotshape(greenCross, style=shape.xcross, color=#66bb6a, location=location.abovebar, size=size.tiny, title="Green Cross", transp=50)
+plotshape(blueTriangleUp, style=shape.triangleup, color=#0064ff, location=location.abovebar, size=size.tiny, title="Blue Triangle Bull", transp=50)
+plotshape(blueTriangleDown, style=shape.triangledown, color=#0064ff, location=location.belowbar, size=size.tiny, title="Blue Triangle Bear", transp=50)
 plotshape(redDiamond, style=shape.diamond, color=#ff0000, location=location.abovebar, size=size.tiny, title="Red Diamond", transp=25)
-plotshape(bullCandle, style=shape.diamond, color=#fbc02d, location=location.abovebar, size=size.tiny, title="Bull candle", transp=75)
+plotshape(bullCandle, style=shape.diamond, color=#00796b, location=location.abovebar, size=size.tiny, title="Bull Candle", transp=75, display=display.none)
+plotshape(bearCandle, style=shape.diamond, color=#d32f2f, location=location.belowbar, size=size.tiny, title="Bear Candle", transp=75, display=display.none)
 plotshape(bloodDiamond, style=shape.diamond, color=#ff0000, location=location.abovebar, size=size.small, title="Blood Diamond", transp=15)
 plotshape(yellowCross, style=shape.xcross, color=#fbc02d, location=location.abovebar, size=size.small, title="Yellow Cross", transp=25)
 // } DRAW
@@ -144,9 +152,10 @@ plotshape(yellowCross, style=shape.xcross, color=#fbc02d, location=location.abov
 // ALERTS {
 alertcondition(condition=redDiamond, title="Red Diamond", message="Red Diamond")
 alertcondition(condition=bloodDiamond, title="Blood Diamond", message="Blood Diamond")
-alertcondition(condition=blueTriangle, title="Blue Triangle", message="Blue Triangle")
+alertcondition(condition=blueTriangleUp or blueTriangleDown, title="Blue Triangle", message="Blue Triangle")
 alertcondition(condition=yellowCross, title="Yellow X", message="Yellow X")
 alertcondition(condition=redCross, title="Red X", message="Red X")
+alertcondition(condition=greenCross, title="Green X", message="Green X")
 alertcondition(condition=shortEma, title="Short Signal", message="Short Signal")
 alertcondition(condition=longEma, title="Long Signal", message="Long Signal")
 alertcondition(condition=shortEma or longEma, title="Long/Short Signal", message="Long/Short Signal")
