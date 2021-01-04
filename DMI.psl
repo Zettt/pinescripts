@@ -16,6 +16,12 @@ plot(adx, color=#2196f3, title="ADX", style=plot.style_line)
 
 plot(diplus, color=#81c784, title="DI+")
 plot(diminus, color=#e57373, title="DI+")
+diEMA = input(title="DI EMA", defval=9, minval=1)
+adxSMA = input(title="ADX SMA", defval=2, minval=1)
+// SMA works better for adx?
+plot(sma(adx, adxSMA), color=color.orange, title="ADX SMA", display=display.none)
+plot(ema(diplus, diEMA), color=color.orange, title="DI+ EMA", display=display.none)
+plot(ema(diminus, diEMA), color=color.orange, title="DI- EMA", display=display.none)
 
 ADX_wm_threshold = input(20,title="ADX Weak Threshold", minval=0)
 ADX_ms_threshold_f = input(50,title="ADX Weak Threshold", minval=0)
