@@ -9,8 +9,8 @@
 //@version=4
 
 study(title="Directional Movement Index", shorttitle="DMI", format=format.price, precision=4)
-lensig = input(14, title="ADX Smoothing", minval=1, maxval=50)
-len = input(14, minval=1, title="DI Length")
+lensig = input(title="ADX Smoothing", defval=6, minval=1, maxval=50)
+len = input(title="DI Length", defval=14, minval=1)
 [diplus, diminus, adx] = dmi(len, lensig)
 plot(adx, color=#2196f3, title="ADX", style=plot.style_line)
 
