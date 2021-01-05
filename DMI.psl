@@ -14,7 +14,7 @@ len = input(title="DI Length", defval=14, minval=1)
 [diplus, diminus, adx] = dmi(len, lensig)
 
 adxStrengthening = adx[1] <= adx
-plot(adx, color=adxStrengthening ? #0097a7 : #80deea, title="ADX", style=plot.style_line, linewidth=1)
+plot(adx, color=adxStrengthening ? #7b1fa2 : #e1bee7, title="ADX", style=plot.style_line, linewidth=1)
 
 plot(diplus, color=#81c784, title="DI+")
 plot(diminus, color=#e57373, title="DI+")
