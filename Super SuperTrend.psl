@@ -18,6 +18,22 @@ st3mult = input(title="SuperTrend 3 Multiplier", type=input.integer, defval=3)
 
 //uptrend = close >= st1 and close >= st2 and close >= st3
 downtrend = close <= st1 and close <= st2 and close <= st3
+// plotting (optional and off by default)
+// plotting st1
+col1Resistance = dir1 == 1 and dir1 == dir1[1] ? color.new(color.maroon, 0) : color.new(color.maroon, 100)
+col1Support = dir1 == -1 and dir1 == dir1[1] ? color.new(color.green, 0) : color.new(color.green, 100)
+plot(st1, color = col1Resistance, linewidth=1, display=display.none)
+plot(st1, color = col1Support, linewidth=1, display=display.none)
+// plotting st2
+col2Resistance = dir2 == 1 and dir2 == dir2[1] ? color.new(color.maroon, 0) : color.new(color.maroon, 100)
+col2Support = dir2 == -1 and dir2 == dir2[1] ? color.new(color.green, 0) : color.new(color.green, 100)
+plot(st2, color = col2Resistance, linewidth=1, display=display.none)
+plot(st2, color = col2Support, linewidth=1, display=display.none)
+// plotting st3
+col3Resistance = dir3 == 1 and dir3 == dir3[1] ? color.new(color.maroon, 0) : color.new(color.maroon, 100)
+col3Support = dir3 == -1 and dir3 == dir3[1] ? color.new(color.green, 0) : color.new(color.green, 100)
+plot(st3, color = col3Resistance, linewidth=1, display=display.none)
+plot(st3, color = col3Support, linewidth=1, display=display.none)
 
 barColour = uptrend ? color.green : downtrend ? color.maroon : na
 barcolor(color=barColour)
