@@ -1,0 +1,23 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Zettt
+// Inspired by this YouTube video: https://youtu.be/peCdKOcD8iM?t=143
+
+//@version=4
+study(title="Super SuperTrend", shorttitle="Super SuperTrend", overlay=true)
+
+st1len = input(title="SuperTrend 1 Length", type=input.integer, defval=10)
+st1mult = input(title="SuperTrend 1 Multiplier", type=input.integer, defval=1)
+st2len = input(title="SuperTrend 2 Length", type=input.integer, defval=11)
+st2mult = input(title="SuperTrend 2 Multiplier", type=input.integer, defval=2)
+st3len = input(title="SuperTrend 3 Length", type=input.integer, defval=12)
+st3mult = input(title="SuperTrend 3 Multiplier", type=input.integer, defval=3)
+
+[st1, dir1] = supertrend(st1mult, st1len)
+[st2, dir2] = supertrend(st2mult, st2len)
+[st3, dir3] = supertrend(st3mult, st3len)
+
+//uptrend = close >= st1 and close >= st2 and close >= st3
+downtrend = close <= st1 and close <= st2 and close <= st3
+
+barColour = uptrend ? color.green : downtrend ? color.maroon : na
+barcolor(color=barColour)
