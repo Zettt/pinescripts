@@ -66,3 +66,9 @@ New features mainly include:
 * Updated alerts: Cipher A implements alerts the short alert now too, and you can even set one alert that fires for long, as well as the short signal. I recommmend setting "Condition = Cipher A", "Long/Short Signal", "Options = Once per Bar Close". 
 
 ![](images/VuManChu_Cipher_A.png)
+
+## Super SuperTrend
+
+Inspired by a YouTube strategy, this indicator uses three SuperTrend indicators for long/short signals. The plots are off by default. 
+
+![](images/Super_SuperTrend.png)
