@@ -1,47 +1,44 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © Zettt
+// 2020
 
 //@version=4
 study("Peak Reversal", shorttitle="Peak Reversal", overlay=true)
 
-// showOnlyFirstSignal = input(true, "Show only first signal", input.bool)
 showOnlyFirstSignal = true
-
+keltOrBoll = input(title="Use Bollinger Bands?", type=input.bool, defval=true)
+keltnerEMAlength = input(title="Keltner Channel EMA Length", defval=21, minval=1, type=input.integer)
 keltnerMultiplier = input(title="Keltner Bands Multiplier", defval=1.25, minval=1, type=input.float)
-// smoothing = input(title="Smoothing", defval="RMA", options=["RMA", "SMA", "EMA", "WMA"])
-// ma_function(source, length) =>
-// 	if smoothing == "RMA"
-// 		rma(source, length)
-// 	else
-// 		if smoothing == "SMA"
-// 			sma(source, length)
-// 		else
-// 			if smoothing == "EMA"
-// 				ema(source, length)
-// 			else
-// 				wma(source, length)
-// plot(ma_function(tr(true), length), title = "ATR", color=#991515, transp=0)
-length = 14
-//plot(ema(close, 21) - (rma(tr(true), length) * 1.25), title="Upper Band", color=#991515, display=display.none)
-//plot(ema(close, 21) + (rma(tr(true), length) * 1.25), title="Lower Band", color=#991515, display=display.none)
+bollingerSMAlength = input(title="Bollinger Bands SMA Length", defval=20, minval=1, type=input.integer)
+bollingerMultiplier = input(title="Bollinger Bands Multiplier", defval=2, minval=1, type=input.float)
+
+
+// plot bands off by default
+atrlength = 14
+plot(ema(close, keltnerEMAlength) - (rma(tr(true), atrlength) * keltnerMultiplier), title="Keltner Channel Upper Band", color=#991515, display=display.none)
+plot(ema(close, keltnerEMAlength) + (rma(tr(true), atrlength) * keltnerMultiplier), title="Keltner Channel Lower Band", color=#991515, display=display.none)
 
 
 // long/short when the candle body (not high low) is outside of Keltner channel extremes
-downBand = ( ema(close, 21) - (rma(tr(true), length) * keltnerMultiplier) )
-upBand = ( ema(close, 21) + (rma(tr(true), length) * keltnerMultiplier) )
+downKeltnerBand = ( ema(close, keltnerEMAlength) - (rma(tr(true), atrlength) * keltnerMultiplier) )
+upKeltnerBand = ( ema(close, keltnerEMAlength) + (rma(tr(true), atrlength) * keltnerMultiplier) )
+// dev = bollingerMultiplier * stdev(close, bollingerSMAlength)
+downBollBand = ( sma(close, bollingerSMAlength) - (bollingerMultiplier * stdev(close, bollingerSMAlength)) )
+upBollBand = ( sma(close, bollingerSMAlength) + bollingerMultiplier * stdev(close, bollingerSMAlength) )
+
 
 // long/short condition only when the previous candle is a free bar, and the current candle opened outside, but closed inside
-longRejection = close[1] <= downBand and low[1] <= downBand and low <= downBand and close >= downBand
-shortRejection = close[1] >= upBand and high[1] >= upBand and high >= upBand and close <= upBand
+longRejection = keltOrBoll ? close[1] <= downBollBand and low[1] <= downBollBand and low <= downBollBand and close >= downBollBand : close[1] <= downKeltnerBand and low[1] <= downKeltnerBand and low <= downKeltnerBand and close >= downKeltnerBand
+shortRejection = keltOrBoll ? close[1] >= upBollBand and high[1] >= upBollBand and high >= upBollBand and close <= upBollBand : close[1] >= upKeltnerBand and high[1] >= upKeltnerBand and high >= upKeltnerBand and close <= upKeltnerBand
 
 showLong = showOnlyFirstSignal ? longRejection and not longRejection[1] : longRejection
 showShort = showOnlyFirstSignal ? shortRejection and not shortRejection[1] : shortRejection
-plotshape(showLong, title="Reversal 🔺", style=shape.xcross, size=size.tiny, color=#81c784, transp=75, location=location.belowbar)
-plotshape(showShort, title="Reversal 🔻", style=shape.xcross, size=size.tiny, color=#e57373, transp=75, location=location.abovebar)
+plotshape(showLong, title="Reversal 🔺", style=shape.xcross, size=size.tiny, color=#81c784, transp=50, location=location.belowbar)
+plotshape(showShort, title="Reversal 🔻", style=shape.xcross, size=size.tiny, color=#e57373, transp=50, location=location.abovebar)
 
 // Plot breakouts
-longBreakout = close >= upBand and open <= upBand
-shortBreakout = close <= downBand and open >= downBand
+longBreakout = close >= upKeltnerBand and open <= upKeltnerBand
+shortBreakout = close <= downKeltnerBand and open >= downKeltnerBand
 
 showLongBreakout = showOnlyFirstSignal ? longBreakout and not longBreakout[1] : longBreakout
 showShortBreakout = showOnlyFirstSignal ? shortBreakout and not shortBreakout[1] : shortBreakout
