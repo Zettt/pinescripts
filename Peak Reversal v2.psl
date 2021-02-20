@@ -25,26 +25,42 @@ plot(upMaximumBand, title="Keltner Extreme Upper Band", color=#991515, display=d
 plot(downMaximumBand, title="Keltner Extreme Lower Band", color=#991515, display=display.none)
 
 // plot bar colors depending on how many bars are outside the band
-firstFreeBar = high <= upKeltnerBand and close <= upKeltnerBand
-numFreeBar = barssince(firstFreeBar)
+// outside the upper band
+firstFreeBarUp = high <= upKeltnerBand and close <= upKeltnerBand
+numFreeBarsUp = barssince(firstFreeBarUp)
 
-color color_bar = na
+color colorBarUp = na
 
-if numFreeBar > 5
-    color_bar := color.red
-else if numFreeBar > 2
-    color_bar := color.orange
-else if numFreeBar > 0
-    color_bar := color.yellow
+if numFreeBarsUp > 5
+    colorBarUp := #b71c1c
+else if numFreeBarsUp > 2
+    colorBarUp := #ef5350
+else if numFreeBarsUp > 0
+    colorBarUp := #ef9a9a
 else
-    color_bar := na
+    colorBarUp := na
     
-barcolor(color_bar, title="First Free Bar")
+barcolor(colorBarUp, title="Up Deviations")
 // color=#81c784
 
+// outside lower band
+firstFreeBarDown = low >= downKeltnerBand and close >= downKeltnerBand
+numFreeBarsDown = barssince(firstFreeBarDown)
+
+color colorBarDown = na
+
+if numFreeBarsDown > 5
+    colorBarDown := #1b5e20
+else if numFreeBarsDown > 2
+    colorBarDown := #66bb6a
+else if numFreeBarsDown > 0
+    colorBarDown := #a5d6a7
+else
+    colorBarDown := na
+    
+barcolor(colorBarDown, title="Down Deviations")
+
 // Plot breakouts
-// longBreakout = close >= upKeltnerBand and open <= upKeltnerBand
-// shortBreakout = close <= downKeltnerBand and open >= downKeltnerBand
 longBreakout = high >= upKeltnerBand // and open <= upKeltnerBand
 shortBreakout = close <= downKeltnerBand // and open >= downKeltnerBand
 
@@ -56,8 +72,6 @@ plotshape(showLongBreakout, title="Breakout", style=shape.triangledown, size=siz
 plotshape(showShortBreakout, title="Breakdown", style=shape.triangleup, size=size.tiny, color=#81c784, transp=60, location=location.belowbar)
 
 // Plot maximum breakouts
-// longMaximumBreakout = close >= upMaximumBand and open <= upMaximumBand
-// shortMaximumBreakout = close <= downMaximumBand and open >= downMaximumBand
 longMaximumBreakout = high >= upMaximumBand // and open <= upMaximumBand
 shortMaximumBreakout = low <= downMaximumBand // and open >= downMaximumBand
 
