@@ -84,4 +84,11 @@ plotshape(showShortMaximumBreakout, title="Breakdown", style=shape.triangleup, s
 
     
 
+// Plot free bars breakouts
+longFreeBar = low >= upKeltnerBand
+shortFreeBar = high <= downKeltnerBand
 
+// plotshape(showFreeBars ? longFreeBar : na, title="Free Bar Up", style=shape.triangledown, size=size.tiny, color=#e57373, transp=10, location=location.abovebar)//, display=display.none)
+// plotshape(showFreeBars ? shortFreeBar : na, title="Free Bar Down", style=shape.triangleup, size=size.tiny, color=#81c784, transp=10, location=location.belowbar)//, display=display.none)
+plotchar(showFreeBars ? longFreeBar : na, title="Free Bar Up", char="★", size=size.tiny, color=#e57373, transp=10, location=location.abovebar)//, display=display.none)
+plotchar(showFreeBars ? shortFreeBar : na, title="Free Bar Down", char="★", size=size.tiny, color=#81c784, transp=10, location=location.belowbar)//, display=display.none)
