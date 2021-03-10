@@ -7,22 +7,25 @@ study("Peak Reversal v2", shorttitle="Peak Reversal v2", overlay=true)
 
 showOnlyFirstSignal = true
 keltnerEMAlength = input(title="Keltner Channel EMA Length", defval=21, minval=1, type=input.integer)
-keltnerMultiplier = input(title="Keltner Bands Multiplier", defval=2.25, minval=1, type=input.float)
-maximumPeakMultiplier = input(title="Keltner Maximum Multiplier", defval=3.375, minval=1, type=input.float)
+keltnerMultiplier = input(title="Keltner Bands Normal Multiplier", defval=2.25, minval=1, type=input.float)
+maximumPeakMultiplier = input(title="Keltner Extreme Multiplier", defval=3.375, minval=1, type=input.float)
+showFreeBars = input(title="Show Free Bars?", type=input.bool, defval=true)
 
 // define Keltner bands 
 atrlength = 14
-upKeltnerBand = ( ema(close, keltnerEMAlength) + (rma(tr(true), atrlength) * keltnerMultiplier) )
-downKeltnerBand = ( ema(close, keltnerEMAlength) - (rma(tr(true), atrlength) * keltnerMultiplier) )
+keltnerEMA = ema(close, keltnerEMAlength)
+upKeltnerBand = ( keltnerEMA + (rma(tr(true), atrlength) * keltnerMultiplier) )
+downKeltnerBand = ( keltnerEMA - (rma(tr(true), atrlength) * keltnerMultiplier) )
 
-upMaximumBand = ( ema(close, keltnerEMAlength) + (rma(tr(true), atrlength) * maximumPeakMultiplier) )
-downMaximumBand = ( ema(close, keltnerEMAlength) - (rma(tr(true), atrlength) * maximumPeakMultiplier) )
+upMaximumBand = ( keltnerEMA + (rma(tr(true), atrlength) * maximumPeakMultiplier) )
+downMaximumBand = ( keltnerEMA - (rma(tr(true), atrlength) * maximumPeakMultiplier) )
 
 // plot bands
-plot(upKeltnerBand, title="Keltner Channel Upper Band", color=#991515)
-plot(downKeltnerBand, title="Keltner Channel Lower Band", color=#991515)
-plot(upMaximumBand, title="Keltner Extreme Upper Band", color=#991515, display=display.none)
-plot(downMaximumBand, title="Keltner Extreme Lower Band", color=#991515, display=display.none)
+plot(keltnerEMA, title="Keltner Channel EMA (Mean)", color=#BB6083, linewidth=1, transp=40)
+plot(upKeltnerBand, title="Normal Upper Band", color=#DD8EAD, linewidth=1, transp=40)
+plot(downKeltnerBand, title="Normal Lower Band", color=#DD8EAD, linewidth=1, transp=40)
+plot(upMaximumBand, title="Extreme Upper Band", color=#DD8EAD, linewidth=1, transp=50)
+plot(downMaximumBand, title="Extreme Lower Band", color=#DD8EAD, linewidth=1, transp=50)
 
 // plot bar colors depending on how many bars are outside the band
 // outside the upper band
@@ -60,29 +63,25 @@ else
     
 barcolor(colorBarDown, title="Down Deviations")
 
-// Plot breakouts
-longBreakout = high >= upKeltnerBand // and open <= upKeltnerBand
+// Plot normal band breakouts
+longBreakout = high >= upKeltnerBand // and not low >= upKeltnerBand // this is to prevent overlap, essentially a free bar is also cutting through the normal bands
 shortBreakout = close <= downKeltnerBand // and open >= downKeltnerBand
-
 
 showLongBreakout = showOnlyFirstSignal ? longBreakout and not longBreakout[1] : longBreakout
 showShortBreakout = showOnlyFirstSignal ? shortBreakout and not shortBreakout[1] : shortBreakout
 
-plotshape(showLongBreakout, title="Breakout", style=shape.triangledown, size=size.tiny, color=#e57373, transp=60, location=location.abovebar)
-plotshape(showShortBreakout, title="Breakdown", style=shape.triangleup, size=size.tiny, color=#81c784, transp=60, location=location.belowbar)
+plotshape(showLongBreakout, title="Normal Band Cross Up", style=shape.triangledown, size=size.tiny, color=#e57373, transp=60, location=location.abovebar)
+plotshape(showShortBreakout, title="Normal Band Cross Down", style=shape.triangleup, size=size.tiny, color=#81c784, transp=60, location=location.belowbar)
 
 // Plot maximum breakouts
 longMaximumBreakout = high >= upMaximumBand // and open <= upMaximumBand
 shortMaximumBreakout = low <= downMaximumBand // and open >= downMaximumBand
 
-
 showLongMaximumBreakout = showOnlyFirstSignal ? longMaximumBreakout and not longMaximumBreakout[1] : longMaximumBreakout
 showShortMaximumBreakout = showOnlyFirstSignal ? shortMaximumBreakout and not shortMaximumBreakout[1] : shortMaximumBreakout
 
-plotshape(showLongMaximumBreakout, title="Breakout", style=shape.triangledown, size=size.tiny, color=#e57373, transp=20, location=location.abovebar)//, display=display.none)
-plotshape(showShortMaximumBreakout, title="Breakdown", style=shape.triangleup, size=size.tiny, color=#81c784, transp=20, location=location.belowbar)//, display=display.none)
-
-    
+plotshape(showLongMaximumBreakout, title="Extreme Band Cross Up", style=shape.triangledown, size=size.tiny, color=#e57373, transp=30, location=location.abovebar)//, display=display.none)
+plotshape(showShortMaximumBreakout, title="Extreme Band Cross Down", style=shape.triangleup, size=size.tiny, color=#81c784, transp=30, location=location.belowbar)//, display=display.none)
 
 // Plot free bars breakouts
 longFreeBar = low >= upKeltnerBand
