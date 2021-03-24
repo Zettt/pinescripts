@@ -12,6 +12,7 @@ maximumPeakMultiplier = input(title="Keltner Extreme Multiplier", defval=3.375, 
 showNormalBandCross = input(title="Show Normal Band Crosses?", type=input.bool, defval=true)
 showExtremeBandCross = input(title="Show Extreme Band Crosses?", type=input.bool, defval=true)
 showFreeBars = input(title="Show Free Bars?", type=input.bool, defval=true)
+advancedMode = input(title="Advanced Mode", type=input.bool, defval=false)
 
 // define Keltner bands 
 atrlength = 14
@@ -37,11 +38,11 @@ numFreeBarsUp = barssince(firstFreeBarUp)
 color colorBarUp = na
 
 if numFreeBarsUp > 5
-    colorBarUp := #b71c1c
+    colorBarUp := advancedMode ? #1b5e20 : #b71c1c
 else if numFreeBarsUp > 2
-    colorBarUp := #ef5350
+    colorBarUp := advancedMode ? #66bb6a : #ef5350
 else if numFreeBarsUp > 0
-    colorBarUp := #ef9a9a
+    colorBarUp := advancedMode ? #a5d6a7 : #ef9a9a
 else
     colorBarUp := na
     
@@ -55,11 +56,11 @@ numFreeBarsDown = barssince(firstFreeBarDown)
 color colorBarDown = na
 
 if numFreeBarsDown > 5
-    colorBarDown := #1b5e20
+    colorBarDown := advancedMode ? #b71c1c : #1b5e20
 else if numFreeBarsDown > 2
-    colorBarDown := #66bb6a
+    colorBarDown := advancedMode ? #ef5350 : #66bb6a
 else if numFreeBarsDown > 0
-    colorBarDown := #a5d6a7
+    colorBarDown := advancedMode ? #ef9a9a : #a5d6a7
 else
     colorBarDown := na
     
