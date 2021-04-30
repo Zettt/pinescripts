@@ -15,27 +15,34 @@ upTHR = input(80, title="Up Threshold", minval=0, type=input.integer)
 downTHR = input(20, title="Down Threshold", minval=0, type=input.integer)
 k = sma(stoch(close, high, low, periodK), smoothK)
 d = sma(k, periodD)
-h0 = hline(upTHR, "Upper Band", color=#606060)
-h1 = hline(downTHR, "Lower Band", color=#606060)
+overbought = hline(upTHR, "Upper Band", color=#606060)
+midline = hline(50)
+oversold = hline(downTHR, "Lower Band", color=#606060)
 
-// we need to plot k and d separate because linewidth can't be a mutable variable
+// We need to plot k and d separate because linewidth can't be a mutable variable
 plot(k >= upTHR or k <= downTHR ? k : na, title="%K", style=plot.style_linebr, color=#0d47a1, linewidth=2)
 plot(k <= upTHR or k >= downTHR ? k : na, title="%K", style=plot.style_linebr, color=#2196f3, linewidth=1)
 plot(d >= upTHR or d <= downTHR ? d : na, title="%D", style=plot.style_linebr, color=#e65100, linewidth=2, transp=35)
 plot(d <= upTHR or d >= downTHR ? d : na, title="%D", style=plot.style_linebr, color=#ff9800, linewidth=1, transp=35)
 
-// fill background
-fill(h0, h1, color=#9915FF, title="Background", transp=100)
+// Fill background
+fill(overbought, oversold, color=#9915FF, title="Background", transp=100)
 
 // Overbought Stochs crosses
 showOnlyFirstSignal = true
 upcross = k >= d and k >= downTHR and d <= downTHR
 downcross = k <= d and k <= upTHR and d >= upTHR
 
-
 showLong = showOnlyFirstSignal ? upcross and not upcross[1] : upcross
 showShort = showOnlyFirstSignal ? downcross and not downcross[1] : downcross
 
-bgcolor(showLong ? #81c784 : na , title="macd Background", transp=85)
-bgcolor(showShort ? #e57373 : na , title="macd Background", transp=85)
+bgcolor(showLong ? #81c784 : na , title="Long Background", transp=85)
+bgcolor(showShort ? #e57373 : na , title="Short Background", transp=85)
+
+// Alerts
+// closePrices = security(syminfo.ticker, timeframe.period, close)
+// title="STMC Bull " + timeframe.period causes cannot call tostring error, may get fixed in the future
+// alertcondition(condition=showLong, title="TF Bull", message="TF Bull")
+// alertcondition(condition=showShort, title="TF Bear", message="TF Bear")
+alertcondition(condition=showLong or showShort, title="Stochs Crossed", message="Stochs Crossed")
 

@@ -1,0 +1,54 @@
+// ================================================================================================================================================================================
+// DMI indicator with colored zones
+// ================================================================================================================================================================================
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// Original by TradingView
+// Rewritten by Zettt
+// This version only differs from the original TradingView version in the way that it displays zones in different colors. Scripts like this won't get published in the TV App Store.
+
+//@version=4
+study(title="Directional Movement Index", shorttitle="DMI", format=format.price, precision=4)
+
+//
+// Configuring DMI
+lensig = input(title="ADX Smoothing", defval=6, minval=1, maxval=50)
+longmultiplier = input(title="ADX Multiplier", defval=4, minval=1, maxval=24)
+len = input(title="DI Length", defval=14, minval=1)
+[diplus, diminus, adx] = dmi(len, lensig)
+// Additional DMI indicator which uses multiple values of the original DMI
+[dipluslong, diminuslong, adxlong] = dmi(len * longmultiplier, lensig * longmultiplier)
+
+//
+// Configuring and plotting zones
+ADX_wm_threshold = input(defval=25,title="ADX Weak Threshold", minval=0)
+ADX_ms_threshold_f = input(defval=50,title="ADX Weak Threshold", minval=0)
+osob_f = input(defval=75,title="ADX Weak Threshold", minval=0)
+h0 = hline(0, linestyle=hline.style_dotted, color=color.black, linewidth = 1, title="ADX 0 Line")
+h_wm = hline(ADX_wm_threshold, linestyle=hline.style_dotted, color=color.black, linewidth = 1, title="ADX Weak Threshold")
+h_ms = hline(ADX_ms_threshold_f, linestyle=hline.style_dotted, color=color.black, linewidth = 1, title="ADX Medium Threshold")
+h_osob = hline(osob_f, linestyle=hline.style_dotted, color=color.black, linewidth = 1, title="ADX Exhaustion threshold") 
+h100 = hline(100, linestyle=hline.style_dotted, color=color.white, linewidth = 1, title="ADX 100 Line") 
+
+fill(h0, h_wm, title="ADX = weak", color=#c9daf8, transp=96)
+fill(h_wm, h_ms, title="ADX = medium", color=#a2c0f7, transp=96)
+fill(h_ms, h_osob, title="ADX = strong", color=#7ba4ed, transp=96)
+fill(h_osob, h100, title="ADX = 75 to 100", color=#5888bb, transp=96)
+
+//
+// Plotting the standard DMI
+adxStronger = adx[1] <= adx
+plot(adx, color=adxStronger ? #64b5f6 : #bbdefb, title="ADX", style=plot.style_line, linewidth=1)
+plot(diplus, color=diplus >= diminus ? #81c784 : #c8e6c9, title="DI+")
+plot(diminus, color=diminus >= diplus ? #e57373 : #ffcdd2, title="DI+")
+// diEMA = input(title="DI EMA", defval=9, minval=1)
+// adxSMA = input(title="ADX SMA", defval=2, minval=1)
+// plot(sma(adx, adxSMA), color=color.orange, title="ADX SMA", display=display.none)
+// plot(ema(diplus, diEMA), color=color.orange, title="DI+ EMA", display=display.none)
+// plot(ema(diminus, diEMA), color=color.orange, title="DI- EMA", display=display.none)
+
+//
+// Plotting the long DMI
+// ADX is colored differently depending on whether it is above or below threshold
+plot(adxlong, color=adxlong >= ADX_wm_threshold ? #fbc02d : #fff9c4, title="ADX Long", style=plot.style_line, linewidth=1, display=display.none)
+plot(dipluslong, color=#81c784, title="DI+ Long", display=display.none)
+plot(diminuslong, color=#e57373, title="DI+ Long", display=display.none)
