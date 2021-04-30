@@ -1,0 +1,137 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © TradingPit
+
+//@version=4
+
+strategy("Trending Pullbacks v1", overlay=true,default_qty_type=strategy.percent_of_equity,
+     default_qty_value=10, precision=2, initial_capital=10000, commission_type=strategy.commission.cash_per_order,commission_value=0.1)
+
+// Create Indicators
+shortPeriod = input(title = "Short EMA Period", defval=21)
+longPeriod = input(title ="Long EMA Period", defval=200)
+atrPeriod = input(title = "ATR Period", defval=14)
+atrProfitFactor = input(title = "ATR Profit Factor", defval=2)
+atrStopFactor = input(title = "ATR Stop Factor", defval=1.5)
+useEMASpread = input(title =" Use EMA Spread?", defval=false, type=input.bool)
+EMASpread = input(title="Range Filter EMA Spread Multiplier (atr * factor)", defval=5, type=input.float, step=0.1)
+ATRStop = input(title =" Use ATR Stop Loss", defval=false)
+
+useTrailingSL = input(title =" Use Trailing Stop Loss", defval = true)
+
+longTrailPerc = input(title="Trail Long Loss (%)", minval=0.0, step=0.1, defval=1) * 0.01
+shortTrailPerc = input(title="Trail Short Loss (%)",minval=0.0, step=0.1, defval=1) * 0.01
+
+useATRFilter = input(title =" Use ATR Filter?", defval=true, type=input.bool)
+
+
+if ATRStop == true
+    useTrailingSL := false
+else if useTrailingSL == true
+    ATRStop := false
+    
+shortEMA = ema(ohlc4, shortPeriod)
+longEMA = ema(ohlc4, longPeriod)
+
+atr = atr(atrPeriod)
+
+// Entry conditions
+// long conditions
+firstlongCondition = shortEMA > longEMA
+secondlongCondition = close[1] < shortEMA and close[1] > longEMA
+thirdlongCondition = close > shortEMA
+fourthlongCondition = useEMASpread ? shortEMA - longEMA >= atr*EMASpread : true
+
+// short conditions
+firstshortCondition = shortEMA < longEMA
+secondshortCondition = close[1] > shortEMA and close[1] < longEMA
+thirdshortCondition = close < shortEMA
+fourthshortCondition = useEMASpread ? longEMA - shortEMA >= atr*EMASpread : true
+
+// general conditions for short and long
+fifthCondition = useATRFilter ? atr(14) > ema(atr(14), 12) : true
+
+// old
+// longCondition = crossover(shortEMA, longEMA)
+// shortCondition = crossunder(shortEMA, longEMA)
+
+// new
+longCondition = firstlongCondition and secondlongCondition and thirdlongCondition and fourthlongCondition and fifthCondition
+shortCondition = firstshortCondition and secondshortCondition and thirdshortCondition and fourthshortCondition and fifthCondition
+
+
+
+// Exit conditions
+closeLong = shortEMA < longEMA
+closeShort = shortEMA > longEMA
+
+// Take profits
+longTakeProfit = high + atr * atrProfitFactor
+shortTakeProfit = low - atr * atrProfitFactor
+
+// Determine trail stop loss prices
+longStopPrice = 0.0, shortStopPrice = 0.0
+
+longStopPrice := if (strategy.position_size > 0)
+    stopValue = close * (1 - longTrailPerc)
+    max(stopValue, longStopPrice[1])
+else
+    0
+
+shortStopPrice := if (strategy.position_size < 0)
+    stopValue = close * (1 + shortTrailPerc)
+    min(stopValue, shortStopPrice[1])
+else
+    999999
+    
+liveTrading = input(title ="Live Trading", defval = false)
+//backtesting timeframe
+start = input(title="Backtesting start time",type = input.time, defval = timestamp("01 Jan 2020 00:00 +0300"))
+end = input(title= "Backtesting end time",type = input.time, defval = timestamp("01 Jan 2021 00:00 +0300"))
+
+if liveTrading == false
+    if time >= start and time <= end
+    
+    // Execute trade if condition is True
+        if (longCondition)
+            longStopLoss = low - atr * atrStopFactor
+            strategy.entry("long", strategy.long)
+            if ATRStop == true and useTrailingSL == false
+                strategy.exit("exit","long",comment="ATR SL/TP",stop = longStopLoss, limit=longTakeProfit)
+                
+            else if ATRStop == false and useTrailingSL == true
+            
+                strategy.exit("exit","long",comment="ATR TP",limit=longTakeProfit)
+        
+        if (shortCondition)
+            shortStopLoss = high + atr * atrStopFactor
+            strategy.entry("short", strategy.short)
+            if ATRStop == true and useTrailingSL == false
+                strategy.exit(id="long",comment="ATR SL/TP",stop = shortStopLoss, limit=shortTakeProfit)
+            else if ATRStop == false and useTrailingSL == true
+                strategy.exit(id="long",comment="ATR /TP",limit=shortTakeProfit)
+            
+        strategy.close("long",comment= "Exit due to trend change", when = closeLong)
+        strategy.close("short",comment="Exit due to trend change", when = closeShort)
+        
+        if useTrailingSL
+        
+            // Submit exit orders for trail stop loss price
+            if (strategy.position_size > 0)
+                strategy.exit(id="long",comment="Trailing SL", stop=longStopPrice)
+            
+            if (strategy.position_size < 0)
+                strategy.exit(id="short",comment="Trailing SL", stop=shortStopPrice)
+
+
+// Plot Moving Average's to chart
+plot(shortEMA, color=color.green)
+plot(longEMA, color=color.blue)
+
+plotshape(longCondition, style=shape.triangleup, size=size.tiny, color=#81c784, transp=30, location=location.top)
+plotshape(shortCondition, style=shape.triangledown, size=size.tiny, color=#e57373, transp=30, location=location.top)
+
+plot(strategy.position_size <= 0 ? na : longStopPrice, title="longStopPrice", color=color.red, style=plot.style_linebr, linewidth=2, display=display.none)
+plot(strategy.position_size <= 0 ? na : longTakeProfit, title="longTakeProfit", title="", color=color.green, style=plot.style_linebr, linewidth=2, display=display.none)
+plot(strategy.position_size >= 0 ? na : shortStopPrice, title="shortStopPrice", color=color.red, style=plot.style_linebr, linewidth=2, display=display.none)
+plot(strategy.position_size >= 0 ? na : shortTakeProfit, title="shortTakeProfit", color=color.green, style=plot.style_linebr, linewidth=2, display=display.none)
+
