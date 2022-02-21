@@ -1,0 +1,28 @@
+//@version=4
+study(title="Donchian Channels Experiment", shorttitle="DC Exp", overlay=true, resolution="")
+donchianChannelSource = input(title="Donchian Channel Source", defval="High/Low", options=["Close/Open", "High/Low"])
+donchianChannelLength = input(100, minval=1)
+
+lower = lowest(donchianChannelLength)
+donchianLowest = if donchianChannelSource == "Close/Open"
+    lowestopen  = lowest(open, donchianChannelLength)
+    lowestclose = lowest(close, donchianChannelLength)
+    lower := if lowestopen < lowestclose
+        lowestopen
+    else
+        lowestclose
+
+upper = highest(donchianChannelLength)
+donchianHighest = if donchianChannelSource == "Close/Open"
+    highestopen  = highest(open, donchianChannelLength)
+    highestclose = highest(close, donchianChannelLength)
+    upper := if highestopen > highestclose
+        highestopen
+    else
+        highestclose
+
+basis = avg(upper, lower)
+plot(basis, "Basis", color=#FF6D00)
+l = plot(lower, "Lower", color=#2962FF)
+u = plot(upper, "Upper", color=#2962FF)
+// fill(u, l, color=color.rgb(33, 150, 243, 95), title="Background")
