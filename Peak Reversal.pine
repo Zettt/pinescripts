@@ -24,9 +24,9 @@ bandsToUse = input.string(title='Bands to Use For Crosses and Free Bars:', defva
 atrlength = 14
 keltnerEMA = ta.ema(close, keltnerEMAlength)
 
-[upTightKeltnerBand, downTightKeltnerBand, tightKeltnerMA] = ta.kc(close, keltnerEMAlength, tightKeltnerMultiplier)
-[upKeltnerBand, downKeltnerBand, keltnerMA] = ta.kc(close, keltnerEMAlength, keltnerMultiplier)
-[upExtremeKeltnerBand, downExtremeKeltnerBand, extremeKeltnerMA] = ta.kc(close, keltnerEMAlength, extremePeakMultiplier)
+[tightKeltnerMA, upTightKeltnerBand, downTightKeltnerBand] = ta.kc(close, keltnerEMAlength, tightKeltnerMultiplier)
+[keltnerMA, upKeltnerBand, downKeltnerBand] = ta.kc(close, keltnerEMAlength, keltnerMultiplier)
+[extremeKeltnerMA, upExtremeKeltnerBand, downExtremeKeltnerBand] = ta.kc(close, keltnerEMAlength, extremePeakMultiplier)
 
 
 // plot bands
