@@ -2,105 +2,114 @@
 // © Zettt
 // 2021
 
-//@version=4
-study("Peak Reversal v2", shorttitle="Peak Reversal v2", overlay=true)
+//@version=5
+indicator('Peak Reversal v2', shorttitle='Peak Reversal v2', overlay=true)
 
 showOnlyFirstSignal = true
-keltnerEMAlength = input(title="Keltner Channel EMA Length", defval=21, minval=1, type=input.integer)
-tightKeltnerMultiplier = input(title="Keltner Bands Normal Multiplier", defval=1.125, minval=1, type=input.float)
-keltnerMultiplier = input(title="Keltner Bands Normal Multiplier", defval=2.25, minval=1, type=input.float)
-ExtremePeakMultiplier = input(title="Keltner Extreme Multiplier", defval=3.375, minval=1, type=input.float)
-showMeanEMA = input(title="Show Mean EMA?", type=input.bool, defval=false)
-showTightBand = input(title="Show Tight Band?", type=input.bool, defval=false)
-showNormalBand = input(title="Show Normal Band?", type=input.bool, defval=true)
-showExtremeBand = input(title="Show Extreme Band?", type=input.bool, defval=true)
-showDeviations = input(title="Show Mean Deviations?", type=input.bool, defval=true)
-showBandCross = input(title="Show Band Crosses?", type=input.bool, defval=true)
-showFreeBars = input(title="Show Free Bars?", type=input.bool, defval=false)
-advancedMode = input(title="Advanced Mode", type=input.bool, defval=false)
-bandsToUse = input(title="Bands to Use For Crosses and Free Bars:", type=input.string, defval="Normal", options=["Tight", "Normal", "Extreme"])
+keltnerEMAlength = input.int(title='Keltner Channel EMA Length', defval=21, minval=1)
+tightKeltnerMultiplier = input.float(title='Keltner Bands Normal Multiplier', defval=1.125, minval=1)
+keltnerMultiplier = input.float(title='Keltner Bands Normal Multiplier', defval=2.25, minval=1)
+ExtremePeakMultiplier = input.float(title='Keltner Extreme Multiplier', defval=3.375, minval=1)
+showMeanEMA = input(title='Show Mean EMA?', defval=false)
+showTightBand = input(title='Show Tight Band?', defval=false)
+showNormalBand = input(title='Show Normal Band?', defval=true)
+showExtremeBand = input(title='Show Extreme Band?', defval=true)
+showDeviations = input(title='Show Mean Deviations?', defval=true)
+showBandCross = input(title='Show Band Crosses?', defval=true)
+showFreeBars = input(title='Show Free Bars?', defval=false)
+advancedMode = input(title='Advanced Mode', defval=false)
+bandsToUse = input.string(title='Bands to Use For Crosses and Free Bars:', defval='Normal', options=['Tight', 'Normal', 'Extreme'])
 
 // calculate Keltner bands
 atrlength = 14
-keltnerEMA = ema(close, keltnerEMAlength)
+keltnerEMA = ta.ema(close, keltnerEMAlength)
 
-upTightKeltnerBand = ( keltnerEMA + atr(atrlength) * tightKeltnerMultiplier )
-downTightKeltnerBand = ( keltnerEMA - atr(atrlength) * tightKeltnerMultiplier )
-upKeltnerBand = ( keltnerEMA + atr(atrlength) * keltnerMultiplier )
-downKeltnerBand = ( keltnerEMA - atr(atrlength) * keltnerMultiplier )
-upExtremeKeltnerBand = ( keltnerEMA + atr(atrlength) * ExtremePeakMultiplier )
-downExtremeKeltnerBand = ( keltnerEMA - atr(atrlength) * ExtremePeakMultiplier )
+upTightKeltnerBand = keltnerEMA + ta.atr(atrlength) * tightKeltnerMultiplier
+downTightKeltnerBand = keltnerEMA - ta.atr(atrlength) * tightKeltnerMultiplier
+upKeltnerBand = keltnerEMA + ta.atr(atrlength) * keltnerMultiplier
+downKeltnerBand = keltnerEMA - ta.atr(atrlength) * keltnerMultiplier
+upExtremeKeltnerBand = keltnerEMA + ta.atr(atrlength) * ExtremePeakMultiplier
+downExtremeKeltnerBand = keltnerEMA - ta.atr(atrlength) * ExtremePeakMultiplier
 
 
 // plot bands
-plot(showMeanEMA ? keltnerEMA : na, title="Keltner Channel EMA (Mean)", color=#BB6083, linewidth=1, transp=40)
-plot(showTightBand ? upTightKeltnerBand : na, title="Tight Upper Band", color=#DD8EAD, linewidth=1, transp=30)
-plot(showTightBand ? downTightKeltnerBand : na, title="Tight Lower Band", color=#DD8EAD, linewidth=1, transp=30)
-plot(showNormalBand ? upKeltnerBand : na, title="Normal Upper Band", color=#DD8EAD, linewidth=1, transp=40)
-plot(showNormalBand ? downKeltnerBand : na, title="Normal Lower Band", color=#DD8EAD, linewidth=1, transp=40)
-plot(showExtremeBand ? upExtremeKeltnerBand : na, title="Extreme Upper Band", color=#DD8EAD, linewidth=1, transp=50)
-plot(showExtremeBand ? downExtremeKeltnerBand : na, title="Extreme Lower Band", color=#DD8EAD, linewidth=1, transp=50)
+plot(showMeanEMA ? keltnerEMA : na, title='Keltner Channel EMA (Mean)', color=color.new(#BB6083, 40), linewidth=1)
+plot(showTightBand ? upTightKeltnerBand : na, title='Tight Upper Band', color=color.new(#DD8EAD, 30), linewidth=1)
+plot(showTightBand ? downTightKeltnerBand : na, title='Tight Lower Band', color=color.new(#DD8EAD, 30), linewidth=1)
+plot(showNormalBand ? upKeltnerBand : na, title='Normal Upper Band', color=color.new(#DD8EAD, 40), linewidth=1)
+plot(showNormalBand ? downKeltnerBand : na, title='Normal Lower Band', color=color.new(#DD8EAD, 40), linewidth=1)
+plot(showExtremeBand ? upExtremeKeltnerBand : na, title='Extreme Upper Band', color=color.new(#DD8EAD, 50), linewidth=1)
+plot(showExtremeBand ? downExtremeKeltnerBand : na, title='Extreme Lower Band', color=color.new(#DD8EAD, 50), linewidth=1)
 
 // plot mean deivations
 // outside the upper band
-firstFreeBarUp = if bandsToUse == "Tight"
+firstFreeBarUp = if bandsToUse == 'Tight'
     high <= upTightKeltnerBand and close <= upTightKeltnerBand
-else if bandsToUse == "Normal"
+else if bandsToUse == 'Normal'
     high <= upKeltnerBand and close <= upKeltnerBand
-else if bandsToUse == "Extreme"
+else if bandsToUse == 'Extreme'
     high <= upExtremeKeltnerBand and close <= upExtremeKeltnerBand
-numFreeBarsUp = barssince(firstFreeBarUp)
+numFreeBarsUp = ta.barssince(firstFreeBarUp)
 
 color colorBarUp = na
 
 if numFreeBarsUp > 5
     colorBarUp := advancedMode ? #1b5e20 : #b71c1c
+    colorBarUp
 else if numFreeBarsUp > 2
     colorBarUp := advancedMode ? #66bb6a : #ef5350
+    colorBarUp
 else if numFreeBarsUp > 0
     colorBarUp := advancedMode ? #a5d6a7 : #ef9a9a
+    colorBarUp
 else
     colorBarUp := na
-    
-barcolor(showDeviations ? colorBarUp : na, title="Mean Deviations Up")
+    colorBarUp
+
+barcolor(showDeviations ? colorBarUp : na, title='Mean Deviations Up')
 
 // outside lower band
-firstFreeBarDown = if bandsToUse == "Tight"
+firstFreeBarDown = if bandsToUse == 'Tight'
     low >= downTightKeltnerBand and close >= downTightKeltnerBand
-else if bandsToUse == "Normal"
+else if bandsToUse == 'Normal'
     low >= downKeltnerBand and close >= downKeltnerBand
-else if bandsToUse == "Extreme"
+else if bandsToUse == 'Extreme'
     low >= downExtremeKeltnerBand and close >= downExtremeKeltnerBand
 // firstFreeBarDown = 
-numFreeBarsDown = barssince(firstFreeBarDown)
+numFreeBarsDown = ta.barssince(firstFreeBarDown)
 
 color colorBarDown = na
 
 if numFreeBarsDown > 5
     colorBarDown := advancedMode ? #b71c1c : #1b5e20
+    colorBarDown
 else if numFreeBarsDown > 2
     colorBarDown := advancedMode ? #ef5350 : #66bb6a
+    colorBarDown
 else if numFreeBarsDown > 0
     colorBarDown := advancedMode ? #ef9a9a : #a5d6a7
+    colorBarDown
 else
     colorBarDown := na
-    
-barcolor(showDeviations ? colorBarDown : na, title="Mean Deviations Down")
+    colorBarDown
+
+barcolor(showDeviations ? colorBarDown : na, title='Mean Deviations Down')
+
 
 // Plot band crosses
 
-longCross = if bandsToUse == "Tight"
+longCross = if bandsToUse == 'Tight'
     high >= upTightKeltnerBand
-else if bandsToUse == "Normal"
+else if bandsToUse == 'Normal'
     high >= upKeltnerBand
-else if bandsToUse == "Extreme"
+else if bandsToUse == 'Extreme'
     high >= upExtremeKeltnerBand
 
-shortCross = if bandsToUse == "Tight"
+shortCross = if bandsToUse == 'Tight'
     close <= downTightKeltnerBand
-else if bandsToUse == "Normal"
+else if bandsToUse == 'Normal'
     close <= downKeltnerBand
-else if bandsToUse == "Extreme"
+else if bandsToUse == 'Extreme'
     close <= downExtremeKeltnerBand
 
 showlongCross = showOnlyFirstSignal ? longCross and not longCross[1] : longCross
@@ -111,25 +120,26 @@ upTriangleColor = advancedMode ? #81c784 : #e57373
 downTriangleShape = advancedMode ? shape.triangledown : shape.triangleup
 downTriangleColor = advancedMode ? #e57373 : #81c784
 
-plotshape(showBandCross ? showlongCross : na, title="Normal Band Cross Up", style=upTriangleShape, size=size.tiny, color=upTriangleColor, transp=50, location=location.abovebar)
-plotshape(showBandCross ? showshortCross : na, title="Normal Band Cross Down", style=downTriangleShape, size=size.tiny, color=downTriangleColor, transp=50, location=location.belowbar)
+plotshape(showBandCross ? showlongCross : na, title='Normal Band Cross Up', style=upTriangleShape, size=size.tiny, color=upTriangleColor, location=location.abovebar, transp=50)
+plotshape(showBandCross ? showshortCross : na, title='Normal Band Cross Down', style=downTriangleShape, size=size.tiny, color=downTriangleColor, location=location.belowbar, transp=50)
 
 // Plot free bars breakouts
-longFreeBar =  if bandsToUse == "Tight"
+longFreeBar = if bandsToUse == 'Tight'
     low >= upTightKeltnerBand
-else if bandsToUse == "Normal"
+else if bandsToUse == 'Normal'
     low >= upKeltnerBand
-else if bandsToUse == "Extreme"
+else if bandsToUse == 'Extreme'
     low >= upExtremeKeltnerBand
-shortFreeBar = if bandsToUse == "Tight"
+shortFreeBar = if bandsToUse == 'Tight'
     high <= downTightKeltnerBand
-else if bandsToUse == "Normal"
+else if bandsToUse == 'Normal'
     high <= downKeltnerBand
-else if bandsToUse == "Extreme"
+else if bandsToUse == 'Extreme'
     high <= downExtremeKeltnerBand
 
 upStarColor = advancedMode ? #81c784 : #e57373
 downStarColor = advancedMode ? #e57373 : #81c784
 
-plotchar(showFreeBars ? longFreeBar : na, title="Free Bar Up", char="★", size=size.tiny, color=upStarColor, transp=50, location=location.abovebar)//, display=display.none)
-plotchar(showFreeBars ? shortFreeBar : na, title="Free Bar Down", char="★", size=size.tiny, color=downStarColor, transp=50, location=location.belowbar)//, display=display.none)
+plotchar(showFreeBars ? longFreeBar : na, title='Free Bar Up', char='★', size=size.tiny, color=upStarColor, location=location.abovebar, transp=50)  //, display=display.none)
+plotchar(showFreeBars ? shortFreeBar : na, title='Free Bar Down', char='★', size=size.tiny, color=downStarColor, location=location.belowbar, transp=50)  //, display=display.none)
+
