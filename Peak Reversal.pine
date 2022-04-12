@@ -9,7 +9,7 @@ showOnlyFirstSignal = true
 keltnerEMAlength = input.int(title='Keltner Channel EMA Length', defval=21, minval=1)
 tightKeltnerMultiplier = input.float(title='Keltner Bands Normal Multiplier', defval=1.125, minval=1)
 keltnerMultiplier = input.float(title='Keltner Bands Normal Multiplier', defval=2.25, minval=1)
-ExtremePeakMultiplier = input.float(title='Keltner Extreme Multiplier', defval=3.375, minval=1)
+extremePeakMultiplier = input.float(title='Keltner Extreme Multiplier', defval=3.375, minval=1)
 showMeanEMA = input(title='Show Mean EMA?', defval=false)
 showTightBand = input(title='Show Tight Band?', defval=false)
 showNormalBand = input(title='Show Normal Band?', defval=true)
@@ -24,16 +24,13 @@ bandsToUse = input.string(title='Bands to Use For Crosses and Free Bars:', defva
 atrlength = 14
 keltnerEMA = ta.ema(close, keltnerEMAlength)
 
-upTightKeltnerBand = keltnerEMA + ta.atr(atrlength) * tightKeltnerMultiplier
-downTightKeltnerBand = keltnerEMA - ta.atr(atrlength) * tightKeltnerMultiplier
-upKeltnerBand = keltnerEMA + ta.atr(atrlength) * keltnerMultiplier
-downKeltnerBand = keltnerEMA - ta.atr(atrlength) * keltnerMultiplier
-upExtremeKeltnerBand = keltnerEMA + ta.atr(atrlength) * ExtremePeakMultiplier
-downExtremeKeltnerBand = keltnerEMA - ta.atr(atrlength) * ExtremePeakMultiplier
+[upTightKeltnerBand, downTightKeltnerBand, tightKeltnerMA] = ta.kc(close, keltnerEMAlength, tightKeltnerMultiplier)
+[upKeltnerBand, downKeltnerBand, keltnerMA] = ta.kc(close, keltnerEMAlength, keltnerMultiplier)
+[upExtremeKeltnerBand, downExtremeKeltnerBand, extremeKeltnerMA] = ta.kc(close, keltnerEMAlength, extremePeakMultiplier)
 
 
 // plot bands
-plot(showMeanEMA ? keltnerEMA : na, title='Keltner Channel EMA (Mean)', color=color.new(#BB6083, 40), linewidth=1)
+plot(showMeanEMA ? keltnerMA : na, title='Keltner Channel EMA (Mean)', color=color.new(#BB6083, 40), linewidth=1)
 plot(showTightBand ? upTightKeltnerBand : na, title='Tight Upper Band', color=color.new(#DD8EAD, 30), linewidth=1)
 plot(showTightBand ? downTightKeltnerBand : na, title='Tight Lower Band', color=color.new(#DD8EAD, 30), linewidth=1)
 plot(showNormalBand ? upKeltnerBand : na, title='Normal Upper Band', color=color.new(#DD8EAD, 40), linewidth=1)
