@@ -1,0 +1,23 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Zettt
+// 2023-12-05 - Initial release
+
+//@version=5
+indicator("ATR Percentile Rank")
+
+atrLength = input.int(defval = 14, title = "ATR Length", minval = 1, group = "ATR Percentile")
+lookback = input.int(defval = 50, title = "Percentile Lookback", minval = 1, group = "ATR Percentile")
+emaLength = input.int(defval = 20, title = "EMA Length", minval = 1, group = "ATR Percentile")
+
+// Color gradient
+bottomColor = input.color(defval = color.new(#ffeb3b, 0), title = "Bottom Color", group = "Gradient")
+topColor = input.color(defval = color.new(#f23645, 0), title = "Bottom Color", group = "Gradient")
+
+// Calculations and plots
+atr = ta.atr(atrLength)
+percentileRank = ta.percentrank(atr, lookback)
+percentileEMA = ta.ema(percentileRank, emaLength)
+
+plot(percentileRank, title = "ATR Percentile", color = color.from_gradient(percentileRank, 0, 100, bottomColor, topColor))
+plot(percentileEMA, title = "Percentile EMA", color = color.new(#64b5f6, 20))
+
