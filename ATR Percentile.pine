@@ -5,7 +5,7 @@
 //@version=5
 indicator("ATR Percentile Rank")
 
-atrLength = input.int(defval = 14, title = "ATR Length", minval = 1, group = "ATR Percentile")
+atrLength = input.int(defval = 10, title = "ATR Length", minval = 1, group = "ATR Percentile")
 lookback = input.int(defval = 50, title = "Percentile Lookback", minval = 1, group = "ATR Percentile")
 emaLength = input.int(defval = 20, title = "EMA Length", minval = 1, group = "ATR Percentile")
 
