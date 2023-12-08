@@ -10,8 +10,10 @@ lookback = input.int(defval = 50, title = "Percentile Lookback", minval = 1, gro
 emaLength = input.int(defval = 20, title = "EMA Length", minval = 1, group = "ATR Percentile")
 
 // Color gradient
-bottomColor = input.color(defval = color.new(#ffeb3b, 0), title = "Bottom Color", group = "Gradient")
-topColor = input.color(defval = color.new(#f23645, 0), title = "Bottom Color", group = "Gradient")
+bottomColor = input.color(defval = color.rgb(255, 235, 59, 0), title = "Bottom Color", group = "Gradient")
+topColor = input.color(defval = color.rgb(242, 54, 69, 0), title = "Bottom Color", group = "Gradient")
+// bottomColorCutoff = input.float(defval = 0, title = "Bottom Color Cutoff", minval = 0, step = 0.1, group = "Gradient", tooltip = "Below this value, the gradient will not take effect, i.e. the color will stay constant.")
+// topColorCutoff = input.float(defval = 100, title = "Top Color Cutoff", minval = 0, step = 0.1, group = "Gradient", tooltip = "Above this value…")
 
 // Calculations and plots
 atr = ta.atr(atrLength)
