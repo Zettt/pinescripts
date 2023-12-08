@@ -8,6 +8,7 @@ indicator("ATR Percentile Rank")
 atrLength = input.int(defval = 10, title = "ATR Length", minval = 1, group = "ATR Percentile")
 lookback = input.int(defval = 50, title = "Percentile Lookback", minval = 1, group = "ATR Percentile")
 emaLength = input.int(defval = 20, title = "EMA Length", minval = 1, group = "ATR Percentile")
+percentileRankExtreme = input.int(defval = 10, title = "Percentile Extreme", minval = 1, step = 1, group = "ATR Percentile")
 
 // Color gradient
 bottomColor = input.color(defval = color.rgb(255, 235, 59, 0), title = "Bottom Color", group = "Gradient")
@@ -22,4 +23,6 @@ percentileEMA = ta.ema(percentileRank, emaLength)
 
 plot(percentileRank, title = "ATR Percentile", color = color.from_gradient(percentileRank, 0, 100, bottomColor, topColor))
 plot(percentileEMA, title = "Percentile EMA", color = color.new(#64b5f6, 20))
-
+// plot volatility at extremes
+plot(percentileRank < percentileRankExtreme ? percentileRank : na, title="Lowest Volatility", color=color.rgb(255, 235, 59, 80), style=plot.style_columns, histbase=100)
+plot(percentileRank > 100-percentileRankExtreme ? percentileRank : na, title="Highest Volatility", color=color.rgb(242, 54, 69, 80), style=plot.style_columns, histbase=0)
