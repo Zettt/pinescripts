@@ -1,0 +1,32 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Zettt
+// 2023-12-05 - Initial release
+
+//@version=5
+indicator("MACD Histogram Percentile Rainbow", shorttitle = "MACD Rainbow", overlay = false)
+
+shortEMA = input.int(defval = 12, title = "MACD Short EMA Length", minval = 1, group="MACD")
+longEMA = input.int(defval = 26, title = "MACD Long EMA Length", minval = 1, group="MACD")
+signalEMA = input.int(defval = 9, title = "Signal EMA Length", minval = 1, group="MACD")
+lookback = input.int(defval = 50, title = "Percentile Lookback", minval = 1, group="MACD")
+// optionally we *could* color the background of the plot, when the MACD percentileRank is at extreme levels
+// percentileRankExtreme = input.int(defval = 10, title = "Percentile Extreme", minval = 1, step = 1)
+
+// Color gradient
+bottomColor = input.color(defval = color.rgb(255, 235, 59, 50), title = "Bottom Color", group = "Gradient")
+topColor = input.color(defval = color.rgb(242, 54, 69, 50), title = "Top Color", group = "Gradient")
+// bottomColorCutoff = input.float(defval = 0, title = "Bottom Color Cutoff", minval = 0, step = 0.1, group = "Gradient", tooltip = "Below this value, the gradient will not take effect, i.e. the color will stay constant.")
+// topColorCutoff = input.float(defval = 100, title = "Top Color Cutoff", minval = 0, step = 0.1, group = "Gradient", tooltip = "Above this value…")
+
+// MACD
+[macdLine, signalLine, histLine] = ta.macd(close, shortEMA, longEMA, signalEMA)
+// Ranking the histogram values
+percentileRank = ta.percentrank(histLine, lookback)
+
+// Plots
+plot(macdLine, color=color.blue)
+plot(signalLine, color=color.orange)
+// plot(histLine, color=color.red, style=plot.style_histogram)
+plot(histLine > 0 ? histLine : na, title="Lowest Volatility", color=color.from_gradient(percentileRank, 0, 100, bottomColor, topColor), style=plot.style_columns, histbase=0)
+plot(histLine < 0 ? histLine : na, title="Lowest Volatility", color=color.from_gradient(percentileRank, 0, 100, topColor, bottomColor), style=plot.style_columns, histbase=0)
+
