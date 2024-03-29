@@ -1,0 +1,45 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Zettt
+// Plots difference of price to the difference of two EMAs in percent. The idea is that if price is rallying strongly
+// it would naturally travel further away from a moving average. By calculating the percentage,
+// we can standardize trend strength.
+
+//@version=5
+indicator(title="Standardized MA Difference", shorttitle="Standardized MA Diff", timeframe="", timeframe_gaps=true)
+// Getting inputs
+fastEMALength = input(title = "Fast Length", defval = 21)
+slowEMALength = input(title = "Slow Length", defval = 55)
+src = input(title = "Source", defval = close)
+lookback = input.int(defval = 50, title = "Percentile Lookback", minval = 1, group = "Percentile Ranking")
+percentileEMALength = input.int(defval = 20, title = "EMA Length", minval = 1, group = "Percentile Ranking")
+percentileRankExtreme = input.int(defval = 5, title = "Percentile Extreme", minval = 1, step = 1, group = "Percentile Ranking")
+
+// Calculating
+fastEMA = ta.ema(src, fastEMALength)
+slowEMA = ta.ema(src, slowEMALength)
+macd = fastEMA - slowEMA
+
+differenceToPrice = macd / close * 100
+
+// Color gradient
+bottomColor = input.color(defval = color.rgb(255, 235, 59, 0), title = "Bottom Color", group = "Gradient")
+topColor = input.color(defval = color.rgb(242, 54, 69, 0), title = "Bottom Color", group = "Gradient")
+// bottomColorCutoff = input.float(defval = 0, title = "Bottom Color Cutoff", minval = 0, step = 0.1, group = "Gradient", tooltip = "Below this value, the gradient will not take effect, i.e. the color will stay constant.")
+// topColorCutoff = input.float(defval = 100, title = "Top Color Cutoff", minval = 0, step = 0.1, group = "Gradient", tooltip = "Above this value…")
+
+// Calculations and plots
+percentileRank = ta.percentrank(differenceToPrice, lookback)
+percentileEMA = ta.ema(percentileRank, percentileEMALength)
+
+
+// Plotting
+hline(0, "Zero Line", color = color.new(#787B86, 50))
+
+// plot(macd,   title = "MACD",   color = #2962FF)
+plot(differenceToPrice,   title = "Difference to Price in Percent",   color = #2862ff)
+
+// plot percentile ranking
+plot(percentileRank, title = "Diff to Price Percentile Rank", color = color.from_gradient(percentileRank, 0, 100, bottomColor, topColor), display=display.none)
+plot(percentileEMA, title = "Diff to Price Percentile EMA", color = color.new(#64b5f6, 20), display=display.none)
+plot(percentileRank < percentileRankExtreme ? percentileRank : na, title="Lowest Rank", color=color.rgb(255, 235, 59, 80), style=plot.style_columns, histbase=100, display=display.none)
+plot(percentileRank > 100-percentileRankExtreme ? percentileRank : na, title="Highest Rank", color=color.rgb(242, 54, 69, 80), style=plot.style_columns, histbase=0, display=display.none)
