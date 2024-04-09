@@ -1,0 +1,61 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Zettt
+
+//@version=5
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Zettt
+
+//@version=5
+indicator("Trend Strength & Volatility v2", overlay=true)
+
+// EMA lengths
+ema1Length = input.int(defval = 21, title = "EMA 1", tooltip = "EMA1/2 and EMA2/3 differences will be calculated and standarized, putting them in relation to price.") 
+ema2Length = input.int(defval = 55, title = "EMA 2")
+ema3Length = input.int(defval = 100, title = "EMA 3")
+src = input.source(open, "Source")
+
+// Standardized Trend Strength
+// ###########################
+// We use MACD as trend strength indicator because it calculates the difference of 2 EMAs
+// The measurement is standardized to price
+[macdShort, signalShort, histShort] = ta.macd(close[1], ema1Length, ema2Length, 9) // MACD for shorter EMAs
+[macdLong, signalLong, histLong] = ta.macd(close[1], ema2Length, ema3Length, 9) // MACD for longer EMAs
+differenceToPriceShort = macdShort / close
+differenceToPriceLong = macdLong / close
+
+// Historical Volatility
+// #####################
+lookbackLength = input.int(title='Lookback Length', defval=100, minval=1)
+
+dailyReturns = close / close[1] - 1
+historicalVolatility = ta.stdev(dailyReturns, lookbackLength) * math.sqrt(lookbackLength)
+
+// Position Size
+tradingCapital = input.int(defval = 1, title = "Trading Capital", minval = 1)
+positionSizeShort = tradingCapital * (differenceToPriceShort / historicalVolatility)
+positionSizeLong = tradingCapital * (differenceToPriceLong / historicalVolatility)
+
+// Create a table with two columns and three rows
+t = table.new(position.bottom_left, 6, 2, bgcolor=color.new(color.white, 10))
+
+// Update table cells
+// Table Header
+table.cell(t, 0, 0, text="Short") // Trend strength short
+table.cell(t, 1, 0, text="Long") // Trend strength short
+table.cell(t, 2, 0, text="HV") // Trend strength short
+table.cell(t, 3, 0, text="Size S") // ATR distance in percent
+table.cell(t, 4, 0, text="Size L") // ATR distance in percent
+
+// Column 0
+table.cell(t, 0, 1, text=str.tostring(differenceToPriceShort, "#.##"))
+
+// Column 1
+table.cell(t, 1, 1, text=str.tostring(differenceToPriceLong, "#.##"))
+// Column 2
+table.cell(t, 2, 1, text=str.tostring(historicalVolatility, "#.##"))
+// Column 3
+// table.cell(t, 3, 1, text=str.tostring(risk, "#.##"))
+// Column 4
+table.cell(t, 3, 1, text=str.tostring(positionSizeShort, "#.##"))
+// Column 5
+table.cell(t, 4, 1, text=str.tostring(positionSizeLong, "#.##"))
