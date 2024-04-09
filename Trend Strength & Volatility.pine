@@ -1,0 +1,83 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Zettt
+
+//@version=5
+indicator("Trend Strength & Volatility", overlay=true)
+// import TradingView/ta/7
+
+// EMA lengths
+ema1Length = input.int(defval = 21, title = "EMA 1", tooltip = "This EMA is also used for ATR/Keltner.") 
+ema2Length = input.int(defval = 55, title = "EMA 2")
+ema3Length = input.int(defval = 100, title = "EMA 3")
+
+// Trend Strength
+// ##############
+// We use MACD as trend strength indicator because it calculates the difference of 2 EMAs
+[macdShort, signalShort, histShort] = ta.macd(close[1], ema1Length, ema2Length, 9) // MACD for shorter EMAs
+[macdLong, signalLong, histLong] = ta.macd(close[1], ema2Length, ema3Length, 9) // MACD for longer EMAs
+
+// Volatility
+// ##########
+lookbackLength = input.int(title='Lookback Length', defval=365, minval=1)
+stdevMultiplier = input.float(title='Standard Deviation Multiplier', defval=1, minval=0, step=0.1)
+
+averageReturn = ta.roc(close, lookbackLength)
+risk = ta.stdev(averageReturn, lookbackLength)
+
+// Sharpe
+// ######
+// Sharpe can function as indication for trend strength
+// lookbackLength = input.int(title='Lookback Length', defval=20, minval=1)
+// stdevMultiplier = input.float(title='Standard Deviation Multipliert', defval=2, minval=1, step=0.1)
+
+// averageReturn = ta.roc(close, lookbackLength)
+
+stdev = ta.stdev(averageReturn, lookbackLength)
+sharpe = (averageReturn / stdev)
+
+// ATR/Keltner 
+// ###########
+// Measures distance to price, and displays in percent
+[kcMiddleShort, kcUpperShort, kcLowerShort] = ta.kc(close, ema1Length, 2)
+atrShort = 0.0
+if macdShort >= 0
+    atrShort := 100 - ((kcLowerShort/close[1]) * 100)
+else if macdShort < 0
+    atrShort := 100 - ((kcUpperShort/close[1]) * 100)
+
+// A second ATR value is necessary if trend is different for
+// long and short EMAs
+[kcMiddleLong, kcUpperLong, kcLowerLong] = ta.kc(close, ema1Length, 2)
+atrLong = 0.0
+if macdLong >= 0
+    atrLong := 100 - ((kcLowerLong/close[1]) * 100)
+else if macdLong < 0
+    atrLong := 100 - ((kcUpperLong/close[1]) * 100)
+
+
+
+// Create a table with two columns and three rows
+t = table.new(position.bottom_left, 6, 2, bgcolor=color.new(color.white, 10))
+
+// Update table cells
+// Table Header
+table.cell(t, 0, 0, text="Short") // Trend strength short
+table.cell(t, 1, 0, text="Long") // Trend strength short
+table.cell(t, 2, 0, text="Sharpe") // Trend strength short
+// table.cell(t, 3, 0, text="HV") // Historical volatility = realized vol = annualized vol
+table.cell(t, 3, 0, text="ATR S") // ATR distance in percent
+table.cell(t, 4, 0, text="ATR L") // ATR distance in percent
+
+// Column 0
+table.cell(t, 0, 1, text=str.tostring(macdShort, "#.##"))
+
+// Column 1
+table.cell(t, 1, 1, text=str.tostring(macdLong, "#.##"))
+// Column 2
+table.cell(t, 2, 1, text=str.tostring(sharpe, "#.##"))
+// Column 3
+// table.cell(t, 3, 1, text=str.tostring(risk, "#.##"))
+// Column 4
+table.cell(t, 3, 1, text=str.tostring(atrShort, "#.##"))
+// Column 5
+table.cell(t, 4, 1, text=str.tostring(atrLong, "#.##"))
