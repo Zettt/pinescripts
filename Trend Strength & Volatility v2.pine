@@ -2,10 +2,6 @@
 // © Zettt
 
 //@version=5
-// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
-// © Zettt
-
-//@version=5
 indicator("Trend Strength & Volatility v2", overlay=true)
 
 // EMA lengths
