@@ -1,0 +1,54 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Zettt
+// Plots difference of price to the difference of two EMAs in percent. The idea is that if price is rallying strongly
+// it would naturally travel further away from a moving average. By calculating the percentage,
+// we can standardize trend strength.
+
+//@version=5
+indicator(title="Risk-Based Position Size Calculator", shorttitle="MA Diff+HV+Pos Size", precision=4)
+// Inputs
+fastEMALength = input(title="Fast Length", defval=21)
+slowEMALength = input(title="Slow Length", defval=55)
+signalEMALength = 9 // not used but needed to init the MACD
+src = input(title="Source", defval=close)
+lookback = input.int(defval=100, title="HV Lookback", minval=1)
+tradingCapital = input.int(defval=1, title="Trading Capital", minval=1)
+
+// Calculations
+// MA Difference (using MACD)
+fastEMA = ta.ema(src, fastEMALength)
+slowEMA = ta.ema(src, slowEMALength)
+
+[macd, signal, histogram] = ta.macd(src, fastEMALength, slowEMALength, signalEMALength)
+differenceToPrice = macd / src //*100
+
+// Historical volatility
+dailyReturns = src / src[1] - 1
+historicalVolatility = ta.stdev(dailyReturns, lookback) * math.sqrt(lookback)
+
+// Position size
+positionSize = tradingCapital * (differenceToPrice/historicalVolatility)
+
+// Plotting
+// Colors
+differenceToPriceColor = color.new(#2862ff, 0)
+historicalVolatilityColor = color.new(#349b5b, 0)
+positionSizeColor = color.new(#f18862, 0)
+backcolor = color.new(color.gray, 90) // Background color for the table
+
+hline(0, "Zero Line", color = color.new(#787B86, 50))
+
+plot(differenceToPrice, title="Difference to Price in Percent", color = differenceToPriceColor)
+plot(historicalVolatility, title="Historical Volatility", color = historicalVolatilityColor)
+plot(positionSize, title="Position Size", color = positionSizeColor)
+
+// Create table
+var table myTable = table.new(position=position.bottom_left, columns=3, rows=1, border_width=1)
+
+// Set table headers (unused)
+// table.cell(myTable, 0, 0, "Indicator", bgcolor=backcolor)
+
+// Update table values
+table.cell(myTable, 0, 0, "Difference to Price in Percent", text_color=differenceToPriceColor, bgcolor=backcolor)
+table.cell(myTable, 1, 0, "Historical Volatility", text_color=historicalVolatilityColor, bgcolor=backcolor)
+table.cell(myTable, 2, 0, "Position Size", text_color=positionSizeColor, bgcolor=backcolor)
