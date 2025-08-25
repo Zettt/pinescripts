@@ -1,45 +1,45 @@
 ## Key issues found
 
-- The two multiplier inputs are both titled “Keltner Bands Normal Multiplier,” which is confusing; titles should be distinct for Tight vs Normal to prevent user error. [^21]
-- Unused or misused variables exist (e.g., atrlength and keltnerEMA are defined but never applied in band calculations), and comments such as “plot mean deivations” contain typos and mislead maintenance. [^21]
-- “firstFreeBarUp/Down” are states (being inside a band) rather than event conditions; ta.barssince() should be applied to a discrete event like “first bar back inside after being outside,” not a persistent state. [^21]
-- Cross logic is asymmetric: longCross uses wick (high >= upper) while shortCross uses close (close <= lower); consistency and a user option to choose wick vs body is advisable. [^21]
+- YES. We only allow two bands now. An inner one, and an outer one: The two multiplier inputs are both titled “Keltner Bands Normal Multiplier,” which is confusing; titles should be distinct for Tight vs Normal to prevent user error. [^21]
+- YES: Unused or misused variables exist (e.g., atrlength and keltnerEMA are defined but never applied in band calculations), and comments such as “plot mean deivations” contain typos and mislead maintenance. [^21]
+- YES. I need some examples though, before allowing this as feature: “firstFreeBarUp/Down” are states (being inside a band) rather than event conditions; ta.barssince() should be applied to a discrete event like “first bar back inside after being outside,” not a persistent state. [^21]
+- YES. We should allow users to set whether to use close or high though. Aggressive traders might want to use highs, rather than closes.: Cross logic is asymmetric: longCross uses wick (high >= upper) while shortCross uses close (close <= lower); consistency and a user option to choose wick vs body is advisable. [^21]
 
 
 ## 20 improvements for v3.0
 
 - Fix input labels and UX
-    - Give unique, precise titles and tooltips, e.g., “Tight Multiplier,” “Normal Multiplier,” “Extreme Multiplier,” and add short descriptions to clarify the visual/logic effects. [^21]
-    - Change showOnlyFirstSignal from a hardcoded variable to a user input input.bool with a tooltip explaining “emit only the first signal after a reset.” [^21]
-    - Replace bandsToUse input.string with an input.enum to reduce typos and speed comparisons. [^21]
+    - YES. Tooltips will be very good: Give unique, precise titles and tooltips, e.g., “Tight Multiplier,” “Normal Multiplier,” “Extreme Multiplier,” and add short descriptions to clarify the visual/logic effects. [^21]
+    - YES. See below: Change showOnlyFirstSignal from a hardcoded variable to a user input input.bool with a tooltip explaining “emit only the first signal after a reset.” [^21]
+    - YES: Replace bandsToUse input.string with an input.enum to reduce typos and speed comparisons. [^21]
 - Make band math explicit and configurable
-    - Actually use atrlength by adding a user input for ATR length and computing Keltner bands explicitly: basis = selected MA of close; range = ATR(atrLength); up = basis + mult*range; down = basis − mult*range; this removes ambiguity from ta.kc defaults and uses the declared atrlength. [^21]
-    - Add a selectable “Mean type” input (EMA/SMA/WMA/RMA/HMA) so users can adapt the “mean reversion” anchor to instrument characteristics. [^21]
-    - Offer a setting to compute bands from typical price hlc3 or ohlc4, not only close, which can reduce noise on some markets. [^21]
+    - YES: Actually use atrlength by adding a user input for ATR length and computing Keltner bands explicitly: basis = selected MA of close; range = ATR(atrLength); up = basis + mult*range; down = basis − mult*range; this removes ambiguity from ta.kc defaults and uses the declared atrlength. [^21]
+    - YES/MAYBE. Less important though: Add a selectable “Mean type” input (EMA/SMA/WMA/RMA/HMA) so users can adapt the “mean reversion” anchor to instrument characteristics. [^21]
+    - YES: Offer a setting to compute bands from typical price hlc3 or ohlc4, not only close, which can reduce noise on some markets. [^21]
 - Correct “free bars” into events and improve deviations
-    - Redefine “first free bar back inside” as a discrete event: backInsideUpper = (high <= up and close <= up) and (high[^21] > up[^21]); barsSinceUpperReentry = ta.barssince(backInsideUpper); same for lower; this aligns with the intended “first bar back in” logic. [^21]
-    - Compute and optionally color by a price-to-band z-score-like metric, e.g., dev = (close − basis)/(ATR*mult) to make deviation intensity consistent across multipliers. [^21]
-    - Add a user option to color only bodies, only wicks, or entire bars, and a transparency control to avoid overpowering chart themes. [^21]
+    - YES: Redefine “first free bar back inside” as a discrete event: backInsideUpper = (high <= up and close <= up) and (high[^21] > up[^21]); barsSinceUpperReentry = ta.barssince(backInsideUpper); same for lower; this aligns with the intended “first bar back in” logic. [^21]
+    - YES. Needs refinement. Why, what, how, examples: Compute and optionally color by a price-to-band z-score-like metric, e.g., dev = (close − basis)/(ATR*mult) to make deviation intensity consistent across multipliers. [^21]
+    - NO: Add a user option to color only bodies, only wicks, or entire bars, and a transparency control to avoid overpowering chart themes. [^21]
 - Standardize crossing logic and add signal modes
-    - Provide a “Signal source” option: Wick (high/low crossing), Close (close crossing), or Confirmed (barstate.isconfirmed) to minimize repaint and match different styles. [^21]
-    - Normalize long/short cross symmetry: either both use wick or both use close, controlled by the “Signal source” input to avoid bias. [^21]
+    - YES: Provide a “Signal source” option: Wick (high/low crossing), Close (close crossing), or Confirmed (barstate.isconfirmed) to minimize repaint and match different styles. [^21]
+    - YES. See below: Normalize long/short cross symmetry: either both use wick or both use close, controlled by the “Signal source” input to avoid bias. [^21]
 - Improve visuals and context
-    - Use fill() to shade between upper and lower bands (tight, normal, extreme) with separate toggles and transparency so traders can visually parse regimes at a glance. [^21]
-    - Add a “Squeeze” detector measuring normalized bandwidth, e.g., (up − down)/basis, with a threshold input to mark compression expansions. [^21]
-    - Consolidate colors into var color constants and add a “Color-blind palette” switch to enhance accessibility. [^21]
+    - YES: Use fill() to shade between upper and lower bands (tight, normal, extreme) with separate toggles and transparency so traders can visually parse regimes at a glance. [^21]
+    - MAYBE. Needs some refinement and more explanations: Add a “Squeeze” detector measuring normalized bandwidth, e.g., (up − down)/basis, with a threshold input to mark compression expansions. [^21]
+    - MAYBE. Consolidation, yes. Color-blind palette, probably no: Consolidate colors into var color constants and add a “Color-blind palette” switch to enhance accessibility. [^21]
 - Alerts and automation
-    - Add alertcondition() for all user-relevant events: upper/lower band crosses, first bar back inside, free-bar breakouts, and squeeze begin/end, with descriptive messages and placeholders for ticker/timeframe. [^21]
-    - Provide an option to output compact labels instead of shapes, reducing clutter while maintaining alert functionality. [^21]
+    - MAYBE: Add alertcondition() for all user-relevant events: upper/lower band crosses, first bar back inside, free-bar breakouts, and squeeze begin/end, with descriptive messages and placeholders for ticker/timeframe. [^21]
+    - PROBABLY NO: Provide an option to output compact labels instead of shapes, reducing clutter while maintaining alert functionality. [^21]
 - Multi-timeframe and filters
-    - Add a higher-timeframe trend filter: compute HTF basis and require alignment (e.g., long signals only when close > HTF basis) to reduce countertrend trades; expose HTF timeframe input. [^21]
-    - Include optional volume or volatility filters (e.g., above average volume or ATR percentile) to gate signals in dead markets. [^21]
-    - Session and day-of-week filters let users avoid illiquid hours or specific weekdays known to skew behavior. [^21]
+    - NO: Add a higher-timeframe trend filter: compute HTF basis and require alignment (e.g., long signals only when close > HTF basis) to reduce countertrend trades; expose HTF timeframe input. [^21]
+    - YES. We'll add this as potential feature request. I like the idea but needs more examples and example math to make it more approachable for me: Include optional volume or volatility filters (e.g., above average volume or ATR percentile) to gate signals in dead markets. [^21]
+    - NO: Session and day-of-week filters let users avoid illiquid hours or specific weekdays known to skew behavior. [^21]
 - Strategy/backtest mode
-    - Add a “Mode” switch: Indicator vs Strategy; when Strategy, generate entries on band-cross or reentry events, and exits via stop/target inputs (ATR-based or fixed %), with slippage/commission inputs to produce realistic stats. [^21]
-    - Provide optional pyramiding and max concurrent signals per direction to reflect “show only first” behavior consistently in backtests. [^21]
+    - NO. TradingView doesn't play with this type of indicator. It's either a strategy or an indicator: Add a “Mode” switch: Indicator vs Strategy; when Strategy, generate entries on band-cross or reentry events, and exits via stop/target inputs (ATR-based or fixed %), with slippage/commission inputs to produce realistic stats. [^21]
+    - NO: Provide optional pyramiding and max concurrent signals per direction to reflect “show only first” behavior consistently in backtests. [^21]
 - Refactoring and maintenance
-    - Factor repeated logic (tight/normal/extreme) into a small function returning basis/up/down for the selected regime to reduce duplication and potential drift between branches. [^21]
-    - Clean typos and dead code: remove unused keltnerEMA, actually apply atrlength, fix stray commented lines, and correct comments like “mean deivations” for clarity. [^21]
+    - MAYBE. I don't understand this: Factor repeated logic (tight/normal/extreme) into a small function returning basis/up/down for the selected regime to reduce duplication and potential drift between branches. [^21]
+    - YES. Needs all occurrences as list: Clean typos and dead code: remove unused keltnerEMA, actually apply atrlength, fix stray commented lines, and correct comments like “mean deivations” for clarity. [^21]
 
 
 ## Example event fix (snippet)
@@ -65,8 +65,8 @@ barsSinceReentryLower = ta.barssince(reentryLower)
 
 ## Optional extensions
 
-- Add an on-chart summary table showing the current regime, squeeze state, last signal timing, and HTF alignment to speed decision-making. [^21]
-- Offer an “adaptive” profile that scales multipliers or ATR length by recent volatility percentiles, keeping bands effective across regimes without manual retuning. [^21]
+- MAYBE: Add an on-chart summary table showing the current regime, squeeze state, last signal timing, and HTF alignment to speed decision-making. [^21]
+- MAYBE. Needs more explanation: Offer an “adaptive” profile that scales multipliers or ATR length by recent volatility percentiles, keeping bands effective across regimes without manual retuning. [^21]
 
 
 ## License notes
@@ -77,45 +77,40 @@ barsSinceReentryLower = ta.barssince(reentryLower)
 
 ## Remove outright
 
-- Remove the **Advanced Mode** toggle, since it only flips colors/shapes and adds cognitive load without changing the trading logic. [^21]
+- YES: Remove the **Advanced Mode** toggle, since it only flips colors/shapes and adds cognitive load without changing the trading logic. [^21]
 - Remove Free Bar “star” markers (plotchar ★), as they duplicate the idea of band crosses/re-entries and clutter the chart. [^21]
-- Remove the Mean Deviations bar coloring (barcolor heatmap), which often overpowers candles and duplicates the role of clear, discrete signals. [^21]
-- Remove plotting of multiple band systems simultaneously (tight/normal/extreme) to cut visual noise and prevent conflicting cues. [^21]
+- NO. The mean deviations heatmap is supposed to indicate to traders whether a reversal is more likely, as an extended move outside the bands increases the likelihood of a reversal: Remove the Mean Deviations bar coloring (barcolor heatmap), which often overpowers candles and duplicates the role of clear, discrete signals. [^21]
+- YES. Needs refinement as users would need a smart system to set the distance between two bands. At the moments I'm thinking of only allowing the use of up to two bands. We could apply a single color (okay) or gradient color (better) to inside of the bands: Remove plotting of multiple band systems simultaneously (tight/normal/extreme) to cut visual noise and prevent conflicting cues. [^21]
 
 
 ## Consolidate or deprecate
 
-- Remove bandsToUse and use a single, primary band set for both plotting and signal logic to avoid divergence between visuals and alerts. [^21]
-- Remove separate “Show Tight Band?” and “Show Extreme Band?” toggles; expose one band set with a single multiplier instead of three fixed presets. [^21]
+- YES. We only allow the most inner band to be used for indications. Users can just set the band wider: Remove bandsToUse and use a single, primary band set for both plotting and signal logic to avoid divergence between visuals and alerts. [^21]
+- YES: Remove separate “Show Tight Band?” and “Show Extreme Band?” toggles; expose one band set with a single multiplier instead of three fixed presets. [^21]
 - Remove the separate “Show Mean EMA?” middle-line toggle; if a basis is needed, keep it as a style option under one band set rather than a distinct feature. [^21]
-- Remove asymmetric cross definitions (wick for long, close for short) by consolidating to one signal mode; asymmetry confuses interpretation. [^21]
+- YES: Remove asymmetric cross definitions (wick for long, close for short) by consolidating to one signal mode; asymmetry confuses interpretation. [^21]
 
 
 ## Replace with simpler alternatives
 
-- Replace “Show Only First Signal” with a numeric cooldown bars input for explicit, flexible de-duplication. [^21]
-- Standardize on one unobtrusive marker for all signals, replacing shape-style toggles tied to Advanced Mode. [^21]
-- Keep a single accessible color palette that reads well on light/dark themes, removing multiple aesthetic-only color options. [^21]
-- Use one consistent iconography so the same event always looks the same, improving scan-ability. [^21]
+- YES. Maybe rename to "compute only x signals" or something different: Replace “Show Only First Signal” with a numeric cooldown bars input for explicit, flexible de-duplication. [^21]
+- MAYBE. Needs suggestions: Standardize on one unobtrusive marker for all signals, replacing shape-style toggles tied to Advanced Mode. [^21]
+- YES: Keep a single accessible color palette that reads well on light/dark themes, removing multiple aesthetic-only color options. [^21]
+- I don't understand this one: Use one consistent iconography so the same event always looks the same, improving scan-ability. [^21]
 
 
 ## Streamline inputs
 
-- Collapse duplicate multiplier concepts into one multiplier slider with sensible defaults for simplicity. [^21]
-- Remove inputs that only affect aesthetics, retaining those that materially change calculations or alerts. [^21]
-- Prefer enums over strings and numeric sliders where appropriate to reduce ambiguity and user error. [^21]
+- YES. How would this look like if we only allow one or two bands as an option?: Collapse duplicate multiplier concepts into one multiplier slider with sensible defaults for simplicity. [^21]
+- YES. DUPLICATE. If we remove advanced mode, I don't see which other features this would affect: Remove inputs that only affect aesthetics, retaining those that materially change calculations or alerts. [^21]
+- NO. There are no sliders in Pine Script. Where do we use string inputs?: Prefer enums over strings and numeric sliders where appropriate to reduce ambiguity and user error. [^21]
 
 
 ## Logic alignment
 
-- Ensure a single source of truth for both display and signal checks by unifying the band set used for plotting and logic. [^21]
-- Collapse overlapping event types (e.g., cross vs “free bar breakout”) into a single, unambiguous crossing definition to avoid double signaling. [^21]
-- Prefer discrete events over persistent-state pseudo-events to reduce confusion and improve alert clarity. [^21]
-
-
-## Migration note
-
-- Removing these features and consolidating inputs aligns the script with a simpler UX, fewer redundant options, and consistent behavior across visuals and alerts for a cleaner v3.0 release. [^21]
+- YES. As mentioned, we allow at most two bands. The indicator will always use the more tighter one for its calculations: Ensure a single source of truth for both display and signal checks by unifying the band set used for plotting and logic. [^21]
+- MAYBE. The two features are very different. A band cross shows traders when momentum is picking up, and closes outside of the first band, whereas free bars show extended momentum, likely to reverse, because it's just too extreme. Suggestions?: Collapse overlapping event types (e.g., cross vs “free bar breakout”) into a single, unambiguous crossing definition to avoid double signaling. [^21]
+- YES. I believe this makes sense. Although I need to know where we'd apply this: Prefer discrete events over persistent-state pseudo-events to reduce confusion and improve alert clarity. [^21]
 
 <span style="display:none">[^1][^10][^11][^12][^13][^14][^15][^16][^17][^18][^19][^2][^20][^3][^4][^5][^6][^7][^8][^9]</span>
 
