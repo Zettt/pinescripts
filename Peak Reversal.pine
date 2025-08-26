@@ -7,42 +7,35 @@ indicator('Peak Reversal v2', shorttitle='Peak Reversal v2', overlay=true)
 
 showOnlyFirstSignal = input.bool(title='Show Only First Signal', defval=true, tooltip='If checked, only the first signal after a reset will be shown.')
 keltnerEMAlength = input.int(title='Keltner Channel EMA Length', defval=21, minval=1, tooltip='The length of the EMA used for the Keltner Channels.')
-tightKeltnerMultiplier = input.float(title='Tight Multiplier', defval=1.125, minval=1, tooltip='Users have three bands to choose from: Tight, Normal, and Extreme. This sets the multiplier for the Tight band.')
-keltnerMultiplier = input.float(title='Normal Multiplier', defval=2.25, minval=1)
-extremePeakMultiplier = input.float(title='Extreme Multiplier', defval=3.375, minval=1)
+innerBandMultiplier = input.float(title='Inner Band Multiplier', defval=1.125, minval=0.1, step=0.125)
+outerBandMultiplier = input.float(title='Outer Band Multiplier', defval=2.25, minval=0.1, step=0.125)
 showMeanEMA = input.bool(title='Show Mean EMA?', defval=false, tooltip='Will plot the Channel EMA (mean) in the middle of the bands.')
-showTightBand = input.bool(title='Show Tight Band?', defval=false)
-showNormalBand = input.bool(title='Show Normal Band?', defval=true)
-showExtremeBand = input.bool(title='Show Extreme Band?', defval=true)
+showInnerBand = input.bool(title='Show Inner Band?', defval=true)
+showOuterBand = input.bool(title='Show Outer Band?', defval=true)
 showDeviations = input.bool(title='Show Mean Deviations?', defval=true, tooltip='Indicates when a candle starts going outside the bands.')
 showBandCross = input.bool(title='Show Band Crosses?', defval=true, tooltip='Show when candles cross bands.')
 showFreeBars = input.bool(title='Show Free Bars?', defval=false, tooltip='Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.')
-bandsToUse = input.string(title='Bands to Use', defval='Normal', options=['Tight', 'Normal', 'Extreme'], tooltip='Which of the bands will be used for crosses and free bars.')
+signalBand = input.string(title='Signal Band', defval='Outer', options=['Inner', 'Outer'], tooltip='Which of the bands will be used for all signal calculations.')
 signalSource = input.string(title='Signal Source', defval='Wick', options=['Wick', 'Close'], tooltip='Choose the source for cross signals: "Wick" (high/low) or "Close". Free Bars will not be affected.')
 
 // calculate Keltner bands
-[tightKeltnerMA, upTightKeltnerBand, downTightKeltnerBand] = ta.kc(close, keltnerEMAlength, tightKeltnerMultiplier)
-[keltnerMA, upKeltnerBand, downKeltnerBand] = ta.kc(close, keltnerEMAlength, keltnerMultiplier)
-[extremeKeltnerMA, upExtremeKeltnerBand, downExtremeKeltnerBand] = ta.kc(close, keltnerEMAlength, extremePeakMultiplier)
+[innerKeltnerMA, upInnerKeltnerBand, downInnerKeltnerBand] = ta.kc(close, keltnerEMAlength, innerBandMultiplier)
+[outerKeltnerMA, upOuterKeltnerBand, downOuterKeltnerBand] = ta.kc(close, keltnerEMAlength, outerBandMultiplier)
 
 
 // plot bands
-plot(showMeanEMA ? keltnerMA : na, title='Keltner Channel EMA (Mean)', color=color.new(#BB6083, 40), linewidth=1)
-plot(showTightBand ? upTightKeltnerBand : na, title='Tight Upper Band', color=color.new(#DD8EAD, 30), linewidth=1)
-plot(showTightBand ? downTightKeltnerBand : na, title='Tight Lower Band', color=color.new(#DD8EAD, 30), linewidth=1)
-plot(showNormalBand ? upKeltnerBand : na, title='Normal Upper Band', color=color.new(#DD8EAD, 40), linewidth=1)
-plot(showNormalBand ? downKeltnerBand : na, title='Normal Lower Band', color=color.new(#DD8EAD, 40), linewidth=1)
-plot(showExtremeBand ? upExtremeKeltnerBand : na, title='Extreme Upper Band', color=color.new(#DD8EAD, 50), linewidth=1)
-plot(showExtremeBand ? downExtremeKeltnerBand : na, title='Extreme Lower Band', color=color.new(#DD8EAD, 50), linewidth=1)
+plot(showMeanEMA ? innerKeltnerMA : na, title='Keltner Channel EMA (Mean)', color=color.new(#BB6083, 40), linewidth=1)
+plot(showInnerBand ? upInnerKeltnerBand : na, title='Inner Upper Band', color=color.new(#DD8EAD, 30), linewidth=1)
+plot(showInnerBand ? downInnerKeltnerBand : na, title='Inner Lower Band', color=color.new(#DD8EAD, 30), linewidth=1)
+plot(showOuterBand ? upOuterKeltnerBand : na, title='Outer Upper Band', color=color.new(#DD8EAD, 40), linewidth=1)
+plot(showOuterBand ? downOuterKeltnerBand : na, title='Outer Lower Band', color=color.new(#DD8EAD, 40), linewidth=1)
 
 // plot mean deviations
 // outside the upper band
-firstFreeBarUp = if bandsToUse == 'Tight'
-    high <= upTightKeltnerBand and close <= upTightKeltnerBand
-else if bandsToUse == 'Normal'
-    high <= upKeltnerBand and close <= upKeltnerBand
-else if bandsToUse == 'Extreme'
-    high <= upExtremeKeltnerBand and close <= upExtremeKeltnerBand
+firstFreeBarUp = if signalBand == 'Inner'
+    high <= upInnerKeltnerBand and close <= upInnerKeltnerBand
+else if signalBand == 'Outer'
+    high <= upOuterKeltnerBand and close <= upOuterKeltnerBand
 numFreeBarsUp = ta.barssince(firstFreeBarUp)
 
 color colorBarUp = na
@@ -63,12 +56,10 @@ else
 barcolor(showDeviations ? colorBarUp : na, title='Mean Deviations Up')
 
 // outside lower band
-firstFreeBarDown = if bandsToUse == 'Tight'
-    low >= downTightKeltnerBand and close >= downTightKeltnerBand
-else if bandsToUse == 'Normal'
-    low >= downKeltnerBand and close >= downKeltnerBand
-else if bandsToUse == 'Extreme'
-    low >= downExtremeKeltnerBand and close >= downExtremeKeltnerBand
+firstFreeBarDown = if signalBand == 'Inner'
+    low >= downInnerKeltnerBand and close >= downInnerKeltnerBand
+else if signalBand == 'Outer'
+    low >= downOuterKeltnerBand and close >= downOuterKeltnerBand
 numFreeBarsDown = ta.barssince(firstFreeBarDown)
 
 color colorBarDown = na
@@ -94,19 +85,15 @@ barcolor(showDeviations ? colorBarDown : na, title='Mean Deviations Down')
 longCrossCandle = signalSource == 'Wick' ? high : close
 shortCrossCandle = signalSource == 'Wick' ? low : close
 
-longCross = if bandsToUse == 'Tight'
-    longCrossCandle >= upTightKeltnerBand
-else if bandsToUse == 'Normal'
-    longCrossCandle >= upKeltnerBand
-else if bandsToUse == 'Extreme'
-    longCrossCandle >= upExtremeKeltnerBand
+longCross = if signalBand == 'Inner'
+    longCrossCandle >= upInnerKeltnerBand
+else if signalBand == 'Outer'
+    longCrossCandle >= upOuterKeltnerBand
 
-shortCross = if bandsToUse == 'Tight'
-    shortCrossCandle <= downTightKeltnerBand
-else if bandsToUse == 'Normal'
-    shortCrossCandle <= downKeltnerBand
-else if bandsToUse == 'Extreme'
-    shortCrossCandle <= downExtremeKeltnerBand
+shortCross = if signalBand == 'Inner'
+    shortCrossCandle <= downInnerKeltnerBand
+else if signalBand == 'Outer'
+    shortCrossCandle <= downOuterKeltnerBand
 
 showlongCross = showOnlyFirstSignal ? longCross and not longCross[1] : longCross
 showshortCross = showOnlyFirstSignal ? shortCross and not shortCross[1] : shortCross
@@ -120,18 +107,14 @@ plotshape(showBandCross ? showlongCross : na, title='Normal Band Cross Up', styl
 plotshape(showBandCross ? showshortCross : na, title='Normal Band Cross Down', style=downTriangleShape, size=size.tiny, color=downTriangleColor, location=location.belowbar, transp=50)
 
 // Plot free bars breakouts
-longFreeBar = if bandsToUse == 'Tight'
-    low >= upTightKeltnerBand
-else if bandsToUse == 'Normal'
-    low >= upKeltnerBand
-else if bandsToUse == 'Extreme'
-    low >= upExtremeKeltnerBand
-shortFreeBar = if bandsToUse == 'Tight'
-    high <= downTightKeltnerBand
-else if bandsToUse == 'Normal'
-    high <= downKeltnerBand
-else if bandsToUse == 'Extreme'
-    high <= downExtremeKeltnerBand
+longFreeBar = if signalBand == 'Inner'
+    low >= upInnerKeltnerBand
+else if signalBand == 'Outer'
+    low >= upOuterKeltnerBand
+shortFreeBar = if signalBand == 'Inner'
+    high <= downInnerKeltnerBand
+else if signalBand == 'Outer'
+    high <= downOuterKeltnerBand
 
 upStarColor = #e57373
 downStarColor = #81c784
