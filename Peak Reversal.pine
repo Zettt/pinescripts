@@ -18,6 +18,7 @@ showDeviations = input.bool(title='Show Mean Deviations?', defval=true, tooltip=
 showBandCross = input.bool(title='Show Band Crosses?', defval=true, tooltip='Show when candles cross bands.')
 showFreeBars = input.bool(title='Show Free Bars?', defval=false, tooltip='Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.')
 bandsToUse = input.string(title='Bands to Use', defval='Normal', options=['Tight', 'Normal', 'Extreme'], tooltip='Which of the bands will be used for crosses and free bars.')
+signalSource = input.string(title='Signal Source', defval='Wick', options=['Wick', 'Close'], tooltip='Choose the source for cross signals: "Wick" (high/low) or "Close" (close price).')
 
 // calculate Keltner bands
 atrlength = 14
@@ -94,19 +95,22 @@ barcolor(showDeviations ? colorBarDown : na, title='Mean Deviations Down')
 
 // Plot band crosses
 
+longCrossCandle = signalSource == 'Wick' ? high : close
+shortCrossCandle = signalSource == 'Wick' ? low : close
+
 longCross = if bandsToUse == 'Tight'
-    high >= upTightKeltnerBand
+    longCrossCandle >= upTightKeltnerBand
 else if bandsToUse == 'Normal'
-    high >= upKeltnerBand
+    longCrossCandle >= upKeltnerBand
 else if bandsToUse == 'Extreme'
-    high >= upExtremeKeltnerBand
+    longCrossCandle >= upExtremeKeltnerBand
 
 shortCross = if bandsToUse == 'Tight'
-    close <= downTightKeltnerBand
+    shortCrossCandle <= downTightKeltnerBand
 else if bandsToUse == 'Normal'
-    close <= downKeltnerBand
+    shortCrossCandle <= downKeltnerBand
 else if bandsToUse == 'Extreme'
-    close <= downExtremeKeltnerBand
+    shortCrossCandle <= downExtremeKeltnerBand
 
 showlongCross = showOnlyFirstSignal ? longCross and not longCross[1] : longCross
 showshortCross = showOnlyFirstSignal ? shortCross and not shortCross[1] : shortCross
