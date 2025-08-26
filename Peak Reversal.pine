@@ -11,7 +11,7 @@ innerBandMultiplier = input.float(title='Inner Band Multiplier', defval=1.125, m
 outerBandMultiplier = input.float(title='Outer Band Multiplier', defval=2.25, minval=0.1, step=0.125)
 showMeanEMA = input.bool(title='Show Mean EMA?', defval=false, tooltip='Will plot the Channel EMA (mean) in the middle of the bands.')
 showInnerBand = input.bool(title='Show Inner Band?', defval=true)
-showOuterBand = input.bool(title='Show Outer Band?', defval=true)
+showOuterBand = input.bool(title='Show Outer Band?', defval=false)
 showDeviations = input.bool(title='Show Mean Deviations?', defval=true, tooltip='Indicates when a candle starts going outside the bands.')
 showBandCross = input.bool(title='Show Band Crosses?', defval=true, tooltip='Show when candles cross bands.')
 showFreeBars = input.bool(title='Show Free Bars?', defval=false, tooltip='Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.')
