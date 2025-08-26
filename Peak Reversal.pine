@@ -21,9 +21,6 @@ bandsToUse = input.string(title='Bands to Use', defval='Normal', options=['Tight
 signalSource = input.string(title='Signal Source', defval='Wick', options=['Wick', 'Close'], tooltip='Choose the source for cross signals: "Wick" (high/low) or "Close" (close price).')
 
 // calculate Keltner bands
-atrlength = 14
-keltnerEMA = ta.ema(close, keltnerEMAlength)
-
 [tightKeltnerMA, upTightKeltnerBand, downTightKeltnerBand] = ta.kc(close, keltnerEMAlength, tightKeltnerMultiplier)
 [keltnerMA, upKeltnerBand, downKeltnerBand] = ta.kc(close, keltnerEMAlength, keltnerMultiplier)
 [extremeKeltnerMA, upExtremeKeltnerBand, downExtremeKeltnerBand] = ta.kc(close, keltnerEMAlength, extremePeakMultiplier)
@@ -38,7 +35,7 @@ plot(showNormalBand ? downKeltnerBand : na, title='Normal Lower Band', color=col
 plot(showExtremeBand ? upExtremeKeltnerBand : na, title='Extreme Upper Band', color=color.new(#DD8EAD, 50), linewidth=1)
 plot(showExtremeBand ? downExtremeKeltnerBand : na, title='Extreme Lower Band', color=color.new(#DD8EAD, 50), linewidth=1)
 
-// plot mean deivations
+// plot mean deviations
 // outside the upper band
 firstFreeBarUp = if bandsToUse == 'Tight'
     high <= upTightKeltnerBand and close <= upTightKeltnerBand
@@ -72,7 +69,6 @@ else if bandsToUse == 'Normal'
     low >= downKeltnerBand and close >= downKeltnerBand
 else if bandsToUse == 'Extreme'
     low >= downExtremeKeltnerBand and close >= downExtremeKeltnerBand
-// firstFreeBarDown = 
 numFreeBarsDown = ta.barssince(firstFreeBarDown)
 
 color colorBarDown = na
