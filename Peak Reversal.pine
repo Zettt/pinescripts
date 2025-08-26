@@ -5,20 +5,19 @@
 //@version=5
 indicator('Peak Reversal v2', shorttitle='Peak Reversal v2', overlay=true)
 
-showOnlyFirstSignal = true
-keltnerEMAlength = input.int(title='Keltner Channel EMA Length', defval=21, minval=1)
-tightKeltnerMultiplier = input.float(title='Keltner Bands Normal Multiplier', defval=1.125, minval=1)
-keltnerMultiplier = input.float(title='Keltner Bands Normal Multiplier', defval=2.25, minval=1)
-extremePeakMultiplier = input.float(title='Keltner Extreme Multiplier', defval=3.375, minval=1)
-showMeanEMA = input(title='Show Mean EMA?', defval=false)
-showTightBand = input(title='Show Tight Band?', defval=false)
-showNormalBand = input(title='Show Normal Band?', defval=true)
-showExtremeBand = input(title='Show Extreme Band?', defval=true)
-showDeviations = input(title='Show Mean Deviations?', defval=true)
-showBandCross = input(title='Show Band Crosses?', defval=true)
-showFreeBars = input(title='Show Free Bars?', defval=false)
-advancedMode = input(title='Advanced Mode', defval=false)
-bandsToUse = input.string(title='Bands to Use For Crosses and Free Bars:', defval='Normal', options=['Tight', 'Normal', 'Extreme'])
+showOnlyFirstSignal = input.bool(title='Show Only First Signal', defval=true, tooltip='If checked, only the first signal after a reset will be shown.')
+keltnerEMAlength = input.int(title='Keltner Channel EMA Length', defval=21, minval=1, tooltip='The length of the EMA used for the Keltner Channels.')
+tightKeltnerMultiplier = input.float(title='Tight Multiplier', defval=1.125, minval=1, tooltip='Users have three bands to choose from: Tight, Normal, and Extreme. This sets the multiplier for the Tight band.')
+keltnerMultiplier = input.float(title='Normal Multiplier', defval=2.25, minval=1)
+extremePeakMultiplier = input.float(title='Extreme Multiplier', defval=3.375, minval=1)
+showMeanEMA = input.bool(title='Show Mean EMA?', defval=false, tooltip='Will plot the Channel EMA (mean) in the middle of the bands.')
+showTightBand = input.bool(title='Show Tight Band?', defval=false)
+showNormalBand = input.bool(title='Show Normal Band?', defval=true)
+showExtremeBand = input.bool(title='Show Extreme Band?', defval=true)
+showDeviations = input.bool(title='Show Mean Deviations?', defval=true, tooltip='Indicates when a candle starts going outside the bands.')
+showBandCross = input.bool(title='Show Band Crosses?', defval=true, tooltip='Show when candles cross bands.')
+showFreeBars = input.bool(title='Show Free Bars?', defval=false, tooltip='Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.')
+bandsToUse = input.string(title='Bands to Use', defval='Normal', options=['Tight', 'Normal', 'Extreme'], tooltip='Which of the bands will be used for crosses and free bars.')
 
 // calculate Keltner bands
 atrlength = 14
@@ -51,13 +50,13 @@ numFreeBarsUp = ta.barssince(firstFreeBarUp)
 color colorBarUp = na
 
 if numFreeBarsUp > 5
-    colorBarUp := advancedMode ? #1b5e20 : #b71c1c
+    colorBarUp := #b71c1c
     colorBarUp
 else if numFreeBarsUp > 2
-    colorBarUp := advancedMode ? #66bb6a : #ef5350
+    colorBarUp := #ef5350
     colorBarUp
 else if numFreeBarsUp > 0
-    colorBarUp := advancedMode ? #a5d6a7 : #ef9a9a
+    colorBarUp := #ef9a9a
     colorBarUp
 else
     colorBarUp := na
@@ -78,13 +77,13 @@ numFreeBarsDown = ta.barssince(firstFreeBarDown)
 color colorBarDown = na
 
 if numFreeBarsDown > 5
-    colorBarDown := advancedMode ? #b71c1c : #1b5e20
+    colorBarDown := #1b5e20
     colorBarDown
 else if numFreeBarsDown > 2
-    colorBarDown := advancedMode ? #ef5350 : #66bb6a
+    colorBarDown := #66bb6a
     colorBarDown
 else if numFreeBarsDown > 0
-    colorBarDown := advancedMode ? #ef9a9a : #a5d6a7
+    colorBarDown := #a5d6a7
     colorBarDown
 else
     colorBarDown := na
@@ -112,10 +111,10 @@ else if bandsToUse == 'Extreme'
 showlongCross = showOnlyFirstSignal ? longCross and not longCross[1] : longCross
 showshortCross = showOnlyFirstSignal ? shortCross and not shortCross[1] : shortCross
 
-upTriangleShape = advancedMode ? shape.triangleup : shape.triangledown
-upTriangleColor = advancedMode ? #81c784 : #e57373
-downTriangleShape = advancedMode ? shape.triangledown : shape.triangleup
-downTriangleColor = advancedMode ? #e57373 : #81c784
+upTriangleShape = shape.triangledown
+upTriangleColor = #e57373
+downTriangleShape = shape.triangleup
+downTriangleColor = #81c784
 
 plotshape(showBandCross ? showlongCross : na, title='Normal Band Cross Up', style=upTriangleShape, size=size.tiny, color=upTriangleColor, location=location.abovebar, transp=50)
 plotshape(showBandCross ? showshortCross : na, title='Normal Band Cross Down', style=downTriangleShape, size=size.tiny, color=downTriangleColor, location=location.belowbar, transp=50)
@@ -134,8 +133,8 @@ else if bandsToUse == 'Normal'
 else if bandsToUse == 'Extreme'
     high <= downExtremeKeltnerBand
 
-upStarColor = advancedMode ? #81c784 : #e57373
-downStarColor = advancedMode ? #e57373 : #81c784
+upStarColor = #e57373
+downStarColor = #81c784
 
 plotchar(showFreeBars ? longFreeBar : na, title='Free Bar Up', char='★', size=size.tiny, color=upStarColor, location=location.abovebar, transp=50)  //, display=display.none)
 plotchar(showFreeBars ? shortFreeBar : na, title='Free Bar Down', char='★', size=size.tiny, color=downStarColor, location=location.belowbar, transp=50)  //, display=display.none)
