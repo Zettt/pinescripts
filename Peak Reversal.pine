@@ -99,12 +99,12 @@ showlongCross = showOnlyFirstSignal ? longCross and not longCross[1] : longCross
 showshortCross = showOnlyFirstSignal ? shortCross and not shortCross[1] : shortCross
 
 upTriangleShape = shape.triangledown
-upTriangleColor = #e57373
+upTriangleColor = color.new(#e57373, 50)
 downTriangleShape = shape.triangleup
-downTriangleColor = #81c784
+downTriangleColor = color.new(#81c784, 50)
 
-plotshape(showBandCross ? showlongCross : na, title='Normal Band Cross Up', style=upTriangleShape, size=size.tiny, color=upTriangleColor, location=location.abovebar, transp=50)
-plotshape(showBandCross ? showshortCross : na, title='Normal Band Cross Down', style=downTriangleShape, size=size.tiny, color=downTriangleColor, location=location.belowbar, transp=50)
+plotshape(showBandCross ? showlongCross : na, title='Normal Band Cross Up', style=upTriangleShape, size=size.tiny, color=upTriangleColor, location=location.abovebar)
+plotshape(showBandCross ? showshortCross : na, title='Normal Band Cross Down', style=downTriangleShape, size=size.tiny, color=downTriangleColor, location=location.belowbar)
 
 // Plot free bars breakouts
 longFreeBar = if signalBand == 'Inner'
@@ -116,9 +116,9 @@ shortFreeBar = if signalBand == 'Inner'
 else if signalBand == 'Outer'
     high <= downOuterKeltnerBand
 
-upStarColor = #e57373
-downStarColor = #81c784
+upStarColor = color.new(#e57373, 50)
+downStarColor = color.new(#81c784, 50)
 
-plotchar(showFreeBars ? longFreeBar : na, title='Free Bar Up', char='★', size=size.tiny, color=upStarColor, location=location.abovebar, transp=50)  //, display=display.none)
-plotchar(showFreeBars ? shortFreeBar : na, title='Free Bar Down', char='★', size=size.tiny, color=downStarColor, location=location.belowbar, transp=50)  //, display=display.none)
+plotchar(showFreeBars ? longFreeBar : na, title='Free Bar Up', char='★', size=size.tiny, color=upStarColor, location=location.abovebar)  //, display=display.none)
+plotchar(showFreeBars ? shortFreeBar : na, title='Free Bar Down', char='★', size=size.tiny, color=downStarColor, location=location.belowbar)  //, display=display.none)
 
