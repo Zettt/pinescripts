@@ -85,15 +85,21 @@ barcolor(showDeviations ? colorBarDown : na, title = 'Mean Deviations Down')
 longCrossCandle = signalSource == 'Wick' ? high : close
 shortCrossCandle = signalSource == 'Wick' ? low : close
 
-longCross = if signalBand == 'Inner'
-    longCrossCandle >= upInnerKeltnerBand
-else if signalBand == 'Outer'
-    longCrossCandle >= upOuterKeltnerBand
+longCross = if barstate.isconfirmed
+    if signalBand == 'Inner'
+        longCrossCandle >= upInnerKeltnerBand
+    else if signalBand == 'Outer'
+        longCrossCandle >= upOuterKeltnerBand
+else
+    false
 
-shortCross = if signalBand == 'Inner'
-    shortCrossCandle <= downInnerKeltnerBand
-else if signalBand == 'Outer'
-    shortCrossCandle <= downOuterKeltnerBand
+shortCross = if barstate.isconfirmed
+    if signalBand == 'Inner'
+        shortCrossCandle <= downInnerKeltnerBand
+    else if signalBand == 'Outer'
+        shortCrossCandle <= downOuterKeltnerBand
+else
+    false
 
 showlongCross = showOnlyFirstSignal ? longCross and not longCross[1] : longCross
 showshortCross = showOnlyFirstSignal ? shortCross and not shortCross[1] : shortCross
