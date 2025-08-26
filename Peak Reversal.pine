@@ -18,7 +18,7 @@ showDeviations = input.bool(title='Show Mean Deviations?', defval=true, tooltip=
 showBandCross = input.bool(title='Show Band Crosses?', defval=true, tooltip='Show when candles cross bands.')
 showFreeBars = input.bool(title='Show Free Bars?', defval=false, tooltip='Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.')
 bandsToUse = input.string(title='Bands to Use', defval='Normal', options=['Tight', 'Normal', 'Extreme'], tooltip='Which of the bands will be used for crosses and free bars.')
-signalSource = input.string(title='Signal Source', defval='Wick', options=['Wick', 'Close'], tooltip='Choose the source for cross signals: "Wick" (high/low) or "Close" (close price).')
+signalSource = input.string(title='Signal Source', defval='Wick', options=['Wick', 'Close'], tooltip='Choose the source for cross signals: "Wick" (high/low) or "Close". Free Bars will not be affected.')
 
 // calculate Keltner bands
 [tightKeltnerMA, upTightKeltnerBand, downTightKeltnerBand] = ta.kc(close, keltnerEMAlength, tightKeltnerMultiplier)
