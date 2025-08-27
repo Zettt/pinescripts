@@ -35,20 +35,20 @@ maxMomentumBars = input.int(title = 'Max Momentum Bars', defval = 5, minval = 1,
 upMomentumColor = input.color(title = 'Up Momentum Color', defval = color.new(#b71c1c, 0), tooltip = 'Base color for upward momentum signals.', group = group_coloring)
 downMomentumColor = input.color(title = 'Down Momentum Color', defval = color.new(#1b5e20, 0), tooltip = 'Base color for downward momentum signals.', group = group_coloring)
 
-// calculate Keltner bands
+// Calculate Keltner Bands
 [innerKeltnerMA, upInnerKeltnerBand, downInnerKeltnerBand] = ta.kc(close, keltnerEMAlength, innerBandMultiplier)
 [outerKeltnerMA, upOuterKeltnerBand, downOuterKeltnerBand] = ta.kc(close, keltnerEMAlength, outerBandMultiplier)
 
 
-// plot bands
+// Plot Bands
 plot(showMeanEMA ? innerKeltnerMA : na, title = 'Keltner Channel EMA (Mean)', color = color.new(#BB6083, 40), linewidth = 1)
 plot(showInnerBand ? upInnerKeltnerBand : na, title = 'Inner Upper Band', color = color.new(#DD8EAD, 30), linewidth = 1)
 plot(showInnerBand ? downInnerKeltnerBand : na, title = 'Inner Lower Band', color = color.new(#DD8EAD, 30), linewidth = 1)
 plot(showOuterBand ? upOuterKeltnerBand : na, title = 'Outer Upper Band', color = color.new(#DD8EAD, 40), linewidth = 1)
 plot(showOuterBand ? downOuterKeltnerBand : na, title = 'Outer Lower Band', color = color.new(#DD8EAD, 40), linewidth = 1)
 
-// plot mean deviations
-// outside the upper band
+// Plot Mean Deviations
+// Outside the Upper Band
 firstFreeBarUp = if signalBand == 'Inner'
     high <= upInnerKeltnerBand and close <= upInnerKeltnerBand
 else if signalBand == 'Outer'
@@ -58,7 +58,7 @@ numFreeBarsUp = ta.barssince(firstFreeBarUp)
 color colorBarUp = color.from_gradient(numFreeBarsUp, 0, maxMomentumBars, color.new(upMomentumColor, 80), upMomentumColor)
 barcolor(showDeviations and numFreeBarsUp > 0 ? colorBarUp : na, title = 'Mean Deviations Up')
 
-// outside lower band
+// Outside Lower Band
 firstFreeBarDown = if signalBand == 'Inner'
     low >= downInnerKeltnerBand and close >= downInnerKeltnerBand
 else if signalBand == 'Outer'
@@ -70,7 +70,6 @@ barcolor(showDeviations and numFreeBarsDown > 0 ? colorBarDown : na, title = 'Me
 
 
 // Plot band crosses
-
 longCrossCandle = signalSource == 'Wick' ? high : close
 shortCrossCandle = signalSource == 'Wick' ? low : close
 
@@ -99,7 +98,7 @@ downTriangleShape = shape.triangleup
 plotshape(showBandCross ? showlongCross : false, title = 'Normal Band Cross Up', style = upTriangleShape, size = size.tiny, color = color.new(upMomentumColor, 50), location = location.abovebar)
 plotshape(showBandCross ? showshortCross : false, title = 'Normal Band Cross Down', style = downTriangleShape, size = size.tiny, color = color.new(downMomentumColor, 50), location = location.belowbar)
 
-// Plot free bars breakouts
+// Plot Free Bars Breakouts
 longFreeBar = if signalBand == 'Inner'
     low >= upInnerKeltnerBand
 else if signalBand == 'Outer'
