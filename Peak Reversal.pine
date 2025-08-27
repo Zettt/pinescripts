@@ -11,8 +11,8 @@ indicator('Peak Reversal v3', shorttitle = 'Peak Reversal', overlay = true)
 // Keltner Channel Settings
 group_keltner = "Keltner Channel Settings"
 maType = input.string(title = 'MA Type', defval = 'EMA', options = ['EMA', 'SMA', 'RMA', 'VMA', 'HMA'], tooltip = 'The type of moving average to use for the Keltner Channel basis.', group = group_keltner)
-keltnerEMAlength = input.int(title = 'MA Length', defval = 21, minval = 1, tooltip = 'The length of the MA used for the Keltner Channels.', group = group_keltner)
-atrLength = input.int(title = 'ATR Length', defval = 20, minval = 1, tooltip = 'The length of the ATR used for the Keltner Channels.', group = group_keltner)
+keltnerEMAlength = input.int(title = 'MA Length', defval = 20, minval = 1, tooltip = 'The length of the MA used for the Keltner Channels.', group = group_keltner)
+atrLength = input.int(title = 'ATR Length', defval = 14, minval = 1, tooltip = 'The length of the ATR used for the Keltner Channels.', group = group_keltner)
 innerBandMultiplier = input.float(title = 'Inner Band Multiplier', defval = 2, minval = 0.1, step = 0.25, group = group_keltner)
 outerBandMultiplier = input.float(title = 'Outer Band Multiplier', defval = 3, minval = 0.1, step = 0.25, group = group_keltner)
 
