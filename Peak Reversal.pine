@@ -16,17 +16,17 @@ outerBandMultiplier = input.float(title = 'Outer Band Multiplier', defval = 3, m
 
 // Display Settings
 group_display = "Display Settings"
-showMeanEMA = input.bool(title = 'Show Mean EMA?', defval = false, tooltip = 'Will plot the Channel EMA (mean) in the middle of the bands.', group = group_display)
+showMeanEMA = input.bool(title = 'Show Mean EMA?', defval = true, tooltip = 'Will plot the Channel EMA (mean) in the middle of the bands.', group = group_display)
 showInnerBand = input.bool(title = 'Show Inner Band?', defval = true, group = group_display)
 showOuterBand = input.bool(title = 'Show Outer Band?', defval = false, group = group_display)
-showDeviations = input.bool(title = 'Show Mean Deviations?', defval = true, tooltip = 'Indicates when a candle starts going outside the bands.', group = group_display)
+showDeviations = input.bool(title = 'Show Mean Deviations?', defval = true, tooltip = 'Indicates when candles start going outside the bands. The more candles outside the bands, the likelier a return to the mean becomes.', group = group_display)
 showBandCross = input.bool(title = 'Show Band Crosses?', defval = true, tooltip = 'Show when candles cross bands.', group = group_display)
 showFreeBars = input.bool(title = 'Show Free Bars?', defval = false, tooltip = 'Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.', group = group_display)
 
 // Signal Settings
 group_signals = "Signal Settings"
 showOnlyFirstSignal = input.bool(title = 'Show Only First Signal', defval = true, tooltip = 'If checked, only the first signal after a reset will be shown.', group = group_signals)
-signalBand = input.string(title = 'Signal Band', defval = 'Outer', options = ['Inner', 'Outer'], tooltip = 'Which of the bands will be used for all signal calculations.', group = group_signals)
+signalBand = input.string(title = 'Signal Band', defval = 'Inner', options = ['Inner', 'Outer'], tooltip = 'Which of the bands will be used for all signal calculations.', group = group_signals)
 signalSource = input.string(title = 'Signal Source', defval = 'Wick', options = ['Wick', 'Close'], tooltip = 'Choose the source for cross signals: "Wick" (high/low) or "Close". Free Bars will not be affected.', group = group_signals)
 
 // Momentum Coloring
