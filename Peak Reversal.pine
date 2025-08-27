@@ -25,7 +25,7 @@ showFreeBars = input.bool(title = 'Show Free Bars?', defval = false, tooltip = '
 signalBand = input.string(title = 'Signal Band', defval = 'Outer', options = ['Inner', 'Outer'], tooltip = 'Which of the bands will be used for all signal calculations.')
 signalSource = input.string(title = 'Signal Source', defval = 'Wick', options = ['Wick', 'Close'], tooltip = 'Choose the source for cross signals: "Wick" (high/low) or "Close". Free Bars will not be affected.')
 // Momentum Coloring
-maxMomentumBars = input.int(title = 'Max Momentum Bars', defval = 8, minval = 1, tooltip = 'The number of bars at which momentum coloring reaches its peak intensity.')
+maxMomentumBars = input.int(title = 'Max Momentum Bars', defval = 5, minval = 1, tooltip = 'The number of bars at which momentum coloring reaches its peak intensity. After this many bars, the color will stay constant.')
 upMomentumColor = input.color(title = 'Up Momentum Color', defval = color.new(#b71c1c, 0), tooltip = 'Base color for upward momentum signals.')
 downMomentumColor = input.color(title = 'Down Momentum Color', defval = color.new(#1b5e20, 0), tooltip = 'Base color for downward momentum signals.')
 
