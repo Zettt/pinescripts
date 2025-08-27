@@ -10,7 +10,9 @@ indicator('Peak Reversal v3', shorttitle = 'Peak Reversal', overlay = true)
 //
 // Keltner Channel Settings
 group_keltner = "Keltner Channel Settings"
-keltnerEMAlength = input.int(title = 'EMA Length', defval = 21, minval = 1, tooltip = 'The length of the EMA used for the Keltner Channels.', group = group_keltner)
+maType = input.string(title = 'MA Type', defval = 'EMA', options = ['EMA', 'SMA', 'RMA', 'VMA', 'HMA'], tooltip = 'The type of moving average to use for the Keltner Channel basis.', group = group_keltner)
+keltnerEMAlength = input.int(title = 'MA Length', defval = 21, minval = 1, tooltip = 'The length of the MA used for the Keltner Channels.', group = group_keltner)
+atrLength = input.int(title = 'ATR Length', defval = 20, minval = 1, tooltip = 'The length of the ATR used for the Keltner Channels.', group = group_keltner)
 innerBandMultiplier = input.float(title = 'Inner Band Multiplier', defval = 2, minval = 0.1, step = 0.25, group = group_keltner)
 outerBandMultiplier = input.float(title = 'Outer Band Multiplier', defval = 3, minval = 0.1, step = 0.25, group = group_keltner)
 
@@ -36,12 +38,23 @@ upMomentumColor = input.color(title = 'Up Momentum Color', defval = color.new(#b
 downMomentumColor = input.color(title = 'Down Momentum Color', defval = color.new(#1b5e20, 0), tooltip = 'Base color for downward momentum signals.', group = group_coloring)
 
 // Calculate Keltner Bands
-[innerKeltnerMA, upInnerKeltnerBand, downInnerKeltnerBand] = ta.kc(close, keltnerEMAlength, innerBandMultiplier)
-[outerKeltnerMA, upOuterKeltnerBand, downOuterKeltnerBand] = ta.kc(close, keltnerEMAlength, outerBandMultiplier)
+float basis = switch maType
+    'EMA' => ta.ema(close, keltnerEMAlength)
+    'SMA' => ta.sma(close, keltnerEMAlength)
+    'RMA' => ta.rma(close, keltnerEMAlength)
+    'VMA' => ta.vwma(close, keltnerEMAlength)
+    'HMA' => ta.hma(close, keltnerEMAlength)
+    => na
+
+atrRange = ta.atr(atrLength)
+upInnerKeltnerBand = basis + atrRange * innerBandMultiplier
+downInnerKeltnerBand = basis - atrRange * innerBandMultiplier
+upOuterKeltnerBand = basis + atrRange * outerBandMultiplier
+downOuterKeltnerBand = basis - atrRange * outerBandMultiplier
 
 
 // Plot Bands
-plot(showMeanEMA ? innerKeltnerMA : na, title = 'Keltner Channel EMA (Mean)', color = color.new(#BB6083, 40), linewidth = 1)
+plot(showMeanEMA ? basis : na, title = 'Keltner Channel EMA (Mean)', color = color.new(#BB6083, 40), linewidth = 1)
 plot(showInnerBand ? upInnerKeltnerBand : na, title = 'Inner Upper Band', color = color.new(#DD8EAD, 30), linewidth = 1)
 plot(showInnerBand ? downInnerKeltnerBand : na, title = 'Inner Lower Band', color = color.new(#DD8EAD, 30), linewidth = 1)
 plot(showOuterBand ? upOuterKeltnerBand : na, title = 'Outer Upper Band', color = color.new(#DD8EAD, 40), linewidth = 1)
