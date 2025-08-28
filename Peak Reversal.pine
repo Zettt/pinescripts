@@ -41,7 +41,7 @@ downMomentumColor = input.color(title = 'Down Momentum Color', defval = color.ne
 group_squeeze = "Squeeze Detector"
 showSqueeze = input.bool(title = 'Show Squeeze?', defval = false, tooltip = 'Highlights periods of low volatility (a "squeeze"), which can often precede significant price movements.', group = group_squeeze)
 squeezeLength = input.int(title = 'Squeeze Lookback', defval = 200, minval = 1, tooltip = 'The lookback period for calculating the bandwidth percentile rank.', group = group_squeeze)
-squeezeThresh = input.float(title = 'Squeeze Percentile', defval = 5.0, minval = 0.1, maxval = 100.0, step = 0.5, tooltip = 'The percentile threshold below which a squeeze is triggered. E.g., a value of 5 means the squeeze is active when bandwidth is in the bottom 5% of its historical range.', group = group_squeeze)
+squeezeThresh = input.float(title = 'Squeeze Percentile', defval = 5.0, minval = 0.1, maxval = 100.0, step = 0.1, tooltip = 'The percentile threshold below which a squeeze is triggered. E.g., a value of 5 means the squeeze is active when bandwidth is in the bottom 5% of its historical range.', group = group_squeeze)
 
 // Calculate Keltner Bands
 float basis = switch maType
