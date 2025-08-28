@@ -37,6 +37,12 @@ maxMomentumBars = input.int(title = 'Max Momentum Bars', defval = 5, minval = 1,
 upMomentumColor = input.color(title = 'Up Momentum Color', defval = color.new(#b71c1c, 0), tooltip = 'Base color for upward momentum signals.', group = group_coloring)
 downMomentumColor = input.color(title = 'Down Momentum Color', defval = color.new(#1b5e20, 0), tooltip = 'Base color for downward momentum signals.', group = group_coloring)
 
+// Squeeze Detector
+group_squeeze = "Squeeze Detector"
+showSqueeze = input.bool(title = 'Show Squeeze?', defval = false, tooltip = 'Highlights periods of low volatility (a "squeeze"), which can often precede significant price movements.', group = group_squeeze)
+squeezeLength = input.int(title = 'Squeeze Lookback', defval = 200, minval = 1, tooltip = 'The lookback period for calculating the bandwidth percentile rank.', group = group_squeeze)
+squeezeThresh = input.float(title = 'Squeeze Percentile', defval = 5.0, minval = 0.1, maxval = 100.0, step = 0.5, tooltip = 'The percentile threshold below which a squeeze is triggered. E.g., a value of 5 means the squeeze is active when bandwidth is in the bottom 5% of its historical range.', group = group_squeeze)
+
 // Calculate Keltner Bands
 float basis = switch maType
     'EMA' => ta.ema(close, keltnerEMAlength)
@@ -55,10 +61,21 @@ downOuterKeltnerBand = basis - atrRange * outerBandMultiplier
 
 // Plot Bands
 plot(showMeanEMA ? basis : na, title = 'Keltner Channel EMA (Mean)', color = color.new(#BB6083, 40), linewidth = 1)
-plot(showInnerBand ? upInnerKeltnerBand : na, title = 'Inner Upper Band', color = color.new(#DD8EAD, 30), linewidth = 1)
-plot(showInnerBand ? downInnerKeltnerBand : na, title = 'Inner Lower Band', color = color.new(#DD8EAD, 30), linewidth = 1)
-plot(showOuterBand ? upOuterKeltnerBand : na, title = 'Outer Upper Band', color = color.new(#DD8EAD, 40), linewidth = 1)
-plot(showOuterBand ? downOuterKeltnerBand : na, title = 'Outer Lower Band', color = color.new(#DD8EAD, 40), linewidth = 1)
+p1 = plot(showInnerBand ? upInnerKeltnerBand : na, title = 'Inner Upper Band', color = color.new(#DD8EAD, 30), linewidth = 1)
+p2 = plot(showInnerBand ? downInnerKeltnerBand : na, title = 'Inner Lower Band', color = color.new(#DD8EAD, 30), linewidth = 1)
+p3 = plot(showOuterBand ? upOuterKeltnerBand : na, title = 'Outer Upper Band', color = color.new(#DD8EAD, 40), linewidth = 1)
+p4 = plot(showOuterBand ? downOuterKeltnerBand : na, title = 'Outer Lower Band', color = color.new(#DD8EAD, 40), linewidth = 1)
+
+// Squeeze Calculation
+keltnerBandwidth = signalBand == 'Inner' ? (upInnerKeltnerBand - downInnerKeltnerBand) / basis : (upOuterKeltnerBand - downOuterKeltnerBand) / basis
+
+bandwidthRank = ta.percentrank(keltnerBandwidth, squeezeLength)
+inSqueeze = bandwidthRank <= squeezeThresh
+
+squeezeColor = color.new(color.gray, 85)
+
+fill(p1, p2, color = showSqueeze and inSqueeze ? squeezeColor : na, title = 'Inner Band Squeeze Fill')
+fill(p3, p4, color = showSqueeze and inSqueeze and showOuterBand ? squeezeColor : na, title = 'Outer Band Squeeze Fill')
 
 // Plot Mean Deviations
 // Outside the Upper Band
