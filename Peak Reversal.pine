@@ -24,7 +24,6 @@ showOuterBand = input.bool(title = 'Show Outer Band?', defval = false, group = g
 showDeviations = input.bool(title = 'Show Mean Deviations?', defval = true, tooltip = 'Indicates when candles start going outside the bands. The more candles outside the bands, the likelier a return to the mean becomes.', group = group_display)
 showBandCross = input.bool(title = 'Show Band Crosses?', defval = true, tooltip = 'Show when candles cross bands.', group = group_display)
 showFreeBars = input.bool(title = 'Show Free Bars?', defval = false, tooltip = 'Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.', group = group_display)
-showBandFill = input.bool(title = 'Show Band Fill?', defval = true, tooltip = 'Will fill the area between the bands.', group = group_display)
 
 // Signal Settings
 group_signals = "Signal Settings"
@@ -56,51 +55,10 @@ downOuterKeltnerBand = basis - atrRange * outerBandMultiplier
 
 // Plot Bands
 plot(showMeanEMA ? basis : na, title = 'Keltner Channel EMA (Mean)', color = color.new(#BB6083, 40), linewidth = 1)
-upInnerBandPlot = plot(showInnerBand ? upInnerKeltnerBand : na, title = 'Inner Upper Band', color = color.new(#DD8EAD, 30), linewidth = 1)
-downInnerBandPlot = plot(showInnerBand ? downInnerKeltnerBand : na, title = 'Inner Lower Band', color = color.new(#DD8EAD, 30), linewidth = 1)
-upOuterBandPlot = plot(showOuterBand ? upOuterKeltnerBand : na, title = 'Outer Upper Band', color = color.new(#DD8EAD, 40), linewidth = 1)
-downOuterBandPlot = plot(showOuterBand ? downOuterKeltnerBand : na, title = 'Outer Lower Band', color = color.new(#DD8EAD, 40), linewidth = 1)
-
-// Gradient Fill Logic
-gradientSteps = 5
-upperBandStep = (upOuterKeltnerBand - upInnerKeltnerBand) / gradientSteps
-lowerBandStep = (downInnerKeltnerBand - downOuterKeltnerBand) / gradientSteps
-
-// Plot invisible lines for gradient fills
-y1_upper_0 = plot(upInnerKeltnerBand + 0 * upperBandStep, color=na)
-y2_upper_0 = plot(upInnerKeltnerBand + 1 * upperBandStep, color=na)
-y1_upper_1 = plot(upInnerKeltnerBand + 1 * upperBandStep, color=na)
-y2_upper_1 = plot(upInnerKeltnerBand + 2 * upperBandStep, color=na)
-y1_upper_2 = plot(upInnerKeltnerBand + 2 * upperBandStep, color=na)
-y2_upper_2 = plot(upInnerKeltnerBand + 3 * upperBandStep, color=na)
-y1_upper_3 = plot(upInnerKeltnerBand + 3 * upperBandStep, color=na)
-y2_upper_3 = plot(upInnerKeltnerBand + 4 * upperBandStep, color=na)
-y1_upper_4 = plot(upInnerKeltnerBand + 4 * upperBandStep, color=na)
-y2_upper_4 = plot(upInnerKeltnerBand + 5 * upperBandStep, color=na)
-
-y1_lower_0 = plot(downInnerKeltnerBand - 0 * lowerBandStep, color=na)
-y2_lower_0 = plot(downInnerKeltnerBand - 1 * lowerBandStep, color=na)
-y1_lower_1 = plot(downInnerKeltnerBand - 1 * lowerBandStep, color=na)
-y2_lower_1 = plot(downInnerKeltnerBand - 2 * lowerBandStep, color=na)
-y1_lower_2 = plot(downInnerKeltnerBand - 2 * lowerBandStep, color=na)
-y2_lower_2 = plot(downInnerKeltnerBand - 3 * lowerBandStep, color=na)
-y1_lower_3 = plot(downInnerKeltnerBand - 3 * lowerBandStep, color=na)
-y2_lower_3 = plot(downInnerKeltnerBand - 4 * lowerBandStep, color=na)
-y1_lower_4 = plot(downInnerKeltnerBand - 4 * lowerBandStep, color=na)
-y2_lower_4 = plot(downInnerKeltnerBand - 5 * lowerBandStep, color=na)
-
-// Apply fills
-fill(y1_upper_0, y2_upper_0, color = showBandFill and showInnerBand and showOuterBand ? color.new(upMomentumColor, 95) : na)
-fill(y1_upper_1, y2_upper_1, color = showBandFill and showInnerBand and showOuterBand ? color.new(upMomentumColor, 90) : na)
-fill(y1_upper_2, y2_upper_2, color = showBandFill and showInnerBand and showOuterBand ? color.new(upMomentumColor, 85) : na)
-fill(y1_upper_3, y2_upper_3, color = showBandFill and showInnerBand and showOuterBand ? color.new(upMomentumColor, 80) : na)
-fill(y1_upper_4, y2_upper_4, color = showBandFill and showInnerBand and showOuterBand ? color.new(upMomentumColor, 75) : na)
-
-fill(y1_lower_0, y2_lower_0, color = showBandFill and showInnerBand and showOuterBand ? color.new(downMomentumColor, 95) : na)
-fill(y1_lower_1, y2_lower_1, color = showBandFill and showInnerBand and showOuterBand ? color.new(downMomentumColor, 90) : na)
-fill(y1_lower_2, y2_lower_2, color = showBandFill and showInnerBand and showOuterBand ? color.new(downMomentumColor, 85) : na)
-fill(y1_lower_3, y2_lower_3, color = showBandFill and showInnerBand and showOuterBand ? color.new(downMomentumColor, 80) : na)
-fill(y1_lower_4, y2_lower_4, color = showBandFill and showInnerBand and showOuterBand ? color.new(downMomentumColor, 75) : na)
+plot(showInnerBand ? upInnerKeltnerBand : na, title = 'Inner Upper Band', color = color.new(#DD8EAD, 30), linewidth = 1)
+plot(showInnerBand ? downInnerKeltnerBand : na, title = 'Inner Lower Band', color = color.new(#DD8EAD, 30), linewidth = 1)
+plot(showOuterBand ? upOuterKeltnerBand : na, title = 'Outer Upper Band', color = color.new(#DD8EAD, 40), linewidth = 1)
+plot(showOuterBand ? downOuterKeltnerBand : na, title = 'Outer Lower Band', color = color.new(#DD8EAD, 40), linewidth = 1)
 
 // Plot Mean Deviations
 // Outside the Upper Band
