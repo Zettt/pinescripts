@@ -72,9 +72,9 @@ keltnerBandwidth = signalBand == 'Inner' ? (upInnerKeltnerBand - downInnerKeltne
 bandwidthRank = ta.percentrank(keltnerBandwidth, squeezeLength)
 inSqueeze = bandwidthRank <= squeezeThresh
 
-squeezeColor = color.new(color.gray, 85)
+squeezeColor = color.from_gradient(bandwidthRank, squeezeThresh, 0, color.new(color.gray, 90), color.new(color.white, 75))
 
-fill(p1, p2, color = showSqueeze and inSqueeze ? squeezeColor : na, title = 'Inner Band Squeeze Fill')
+fill(p1, p2, color = showSqueeze and inSqueeze and not showOuterBand ? squeezeColor : na, title = 'Inner Band Squeeze Fill')
 fill(p3, p4, color = showSqueeze and inSqueeze and showOuterBand ? squeezeColor : na, title = 'Outer Band Squeeze Fill')
 
 // Plot Mean Deviations
