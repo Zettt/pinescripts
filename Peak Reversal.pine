@@ -13,8 +13,8 @@ group_keltner = "Keltner Channel Settings"
 maType = input.string(title = 'MA Type', defval = 'EMA', options = ['EMA', 'SMA', 'RMA', 'VMA', 'HMA'], tooltip = 'The type of moving average to use for the Keltner Channel basis.', group = group_keltner, inline = "1")
 keltnerEMAlength = input.int(title = 'MA Length', defval = 20, minval = 1, tooltip = 'The length of the MA used for the Keltner Channels.', group = group_keltner, inline = "1")
 atrLength = input.int(title = 'ATR Length', defval = 14, minval = 1, tooltip = 'The length of the ATR used for the Keltner Channels.', group = group_keltner, inline = "2")
-innerBandMultiplier = input.float(title = 'Inner', defval = 2, minval = 0.1, step = 0.25, group = group_keltner, inline = "3")
-outerBandMultiplier = input.float(title = 'Outer', defval = 3, minval = 0.1, step = 0.25, group = group_keltner, inline = "3")
+innerBandMultiplier = input.float(title = 'Inner', defval = 2, minval = 0.1, step = 0.25, group = group_keltner, inline = "3", tooltip = "Multiplier for the inner band")
+outerBandMultiplier = input.float(title = 'Outer', defval = 3, minval = 0.1, step = 0.25, group = group_keltner, inline = "3", tooltip = "Multiplier for the outer band")
 
 // Display Settings
 group_display = "Display Settings"
@@ -22,14 +22,14 @@ showMeanEMA = input.bool(title = 'Show Mean EMA?', defval = true, tooltip = 'Wil
 showInnerBand = input.bool(title = 'Inner Band?', defval = true, group = group_display, inline = "2")
 showOuterBand = input.bool(title = 'Outer Band?', defval = false, group = group_display, inline = "2")
 showDeviations = input.bool(title = 'Show Mean Deviations?', defval = true, tooltip = 'Indicates when candles start going outside the bands. The more candles outside the bands, the likelier a return to the mean becomes.', group = group_display, inline = "3")
-showBandCross = input.bool(title = 'Band Crosses?', defval = true, tooltip = 'Show when candles cross bands.', group = group_display, inline = "4")
-showFreeBars = input.bool(title = 'Free Bars?', defval = false, tooltip = 'Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.', group = group_display, inline = "4")
 
 // Signal Settings
 group_signals = "Signal Settings"
 showOnlyFirstSignal = input.bool(title = 'Show Only First Signal', defval = true, tooltip = 'If checked, only the first signal after a reset will be shown.', group = group_signals)
-signalBand = input.string(title = 'Signal Band', defval = 'Inner', options = ['Inner', 'Outer'], tooltip = 'Which of the bands will be used for all signal calculations.', group = group_signals, inline = "1")
-signalSource = input.string(title = 'Signal Source', defval = 'Wick', options = ['Wick', 'Close'], tooltip = 'Choose the source for cross signals: "Wick" (high/low) or "Close". Free Bars will not be affected.', group = group_signals, inline = "1")
+showBandCross = input.bool(title = 'Band Crosses?', defval = true, tooltip = 'Show when candles cross bands.', group = group_signals, inline = "1")
+showFreeBars = input.bool(title = 'Free Bars?', defval = false, tooltip = 'Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.', group = group_signals, inline = "1")
+signalBand = input.string(title = 'Signal Band', defval = 'Inner', options = ['Inner', 'Outer'], tooltip = 'Which of the bands will be used for all signal calculations.', group = group_signals, inline = "2")
+signalSource = input.string(title = 'Signal Source', defval = 'Wick', options = ['Wick', 'Close'], tooltip = 'Choose the source for cross signals: "Wick" (high/low) or "Close". Free Bars will not be affected.', group = group_signals, inline = "2")
 
 // Momentum Coloring
 group_coloring = "Momentum Coloring"
