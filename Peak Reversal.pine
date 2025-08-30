@@ -42,6 +42,7 @@ group_squeeze = "Squeeze Detector"
 showSqueeze = input.bool(title = 'Show Squeeze?', defval = false, tooltip = 'Highlights periods of low volatility (a "squeeze"), which can often precede significant price movements.', group = group_squeeze)
 squeezeLength = input.int(title = 'Squeeze Lookback', defval = 200, minval = 1, tooltip = 'The lookback period for calculating the bandwidth percentile rank.', group = group_squeeze)
 squeezeThresh = input.float(title = 'Squeeze Percentile', defval = 5.0, minval = 0.1, maxval = 100.0, step = 0.1, tooltip = 'The percentile threshold below which a squeeze is triggered. E.g., a value of 5 means the squeeze is active when bandwidth is in the bottom 5% of its historical range.', group = group_squeeze)
+squeezeColorInput = input.color(title = 'Squeeze Color', defval = color.new(color.gray, 75), tooltip = 'Color for the squeeze visualization. The gradient will fade out from this color.', group = group_squeeze)
 
 // Calculate Keltner Bands
 float basis = switch maType
@@ -72,7 +73,9 @@ keltnerBandwidth = signalBand == 'Inner' ? (upInnerKeltnerBand - downInnerKeltne
 bandwidthRank = ta.percentrank(keltnerBandwidth, squeezeLength)
 inSqueeze = bandwidthRank <= squeezeThresh
 
-squeezeColor = color.from_gradient(bandwidthRank, 0, squeezeThresh, color.new(color.white, 75), color.new(color.gray, 90))
+startColor = color.new(color.black, 100)
+squeezeColor = color.from_gradient(bandwidthRank, 0, squeezeThresh, squeezeColorInput, startColor)
+
 
 fill(p1, p2, color = showSqueeze and inSqueeze and not showOuterBand ? squeezeColor : na, title = 'Inner Band Squeeze Fill')
 fill(p3, p4, color = showSqueeze and inSqueeze and showOuterBand ? squeezeColor : na, title = 'Outer Band Squeeze Fill')
