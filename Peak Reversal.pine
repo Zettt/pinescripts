@@ -10,11 +10,11 @@ indicator('Peak Reversal v3', shorttitle = 'Peak Reversal', overlay = true)
 //
 // Keltner Channel Settings
 group_keltner = "Keltner Channel Settings"
-maType = input.string(title = 'MA Type', defval = 'EMA', options = ['EMA', 'SMA', 'RMA', 'VMA', 'HMA'], tooltip = 'The type of moving average to use for the Keltner Channel basis.', group = group_keltner, inline = "1")
-keltnerEMAlength = input.int(title = 'MA Length', defval = 20, minval = 1, tooltip = 'The length of the MA used for the Keltner Channels.', group = group_keltner, inline = "1")
+maType = input.string(title = 'MA Type', defval = 'EMA', options = ['EMA', 'SMA', 'RMA', 'VMA', 'HMA'], tooltip = 'MA Type and Length for the Keltner Channel basis.', group = group_keltner, inline = "1")
+keltnerEMAlength = input.int(title = 'MA Length', defval = 20, minval = 1, group = group_keltner, inline = "1")
 atrLength = input.int(title = 'ATR Length', defval = 14, minval = 1, tooltip = 'The length of the ATR used for the Keltner Channels.', group = group_keltner, inline = "2")
-innerBandMultiplier = input.float(title = 'Inner', defval = 2, minval = 0.1, step = 0.25, group = group_keltner, inline = "3", tooltip = "Multiplier for the inner band")
-outerBandMultiplier = input.float(title = 'Outer', defval = 3, minval = 0.1, step = 0.25, group = group_keltner, inline = "3", tooltip = "Multiplier for the outer band")
+innerBandMultiplier = input.float(title = 'Inner', defval = 2, minval = 0.1, step = 0.25, group = group_keltner, inline = "3", tooltip = "Multipliers for the inner and outer bands.")
+outerBandMultiplier = input.float(title = 'Outer', defval = 3, minval = 0.1, step = 0.25, group = group_keltner, inline = "3")
 
 // Display Settings
 group_display = "Display Settings"
@@ -28,20 +28,20 @@ group_signals = "Signal Settings"
 showOnlyFirstSignal = input.bool(title = 'Show Only First Signal', defval = true, tooltip = 'If checked, only the first signal after a reset will be shown.', group = group_signals)
 showBandCross = input.bool(title = 'Band Crosses?', defval = true, tooltip = 'Show when candles cross bands.', group = group_signals, inline = "1")
 showFreeBars = input.bool(title = 'Free Bars?', defval = false, tooltip = 'Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.', group = group_signals, inline = "1")
-signalBand = input.string(title = 'Signal Band', defval = 'Inner', options = ['Inner', 'Outer'], tooltip = 'Which of the bands will be used for all signal calculations.', group = group_signals, inline = "2")
-signalSource = input.string(title = 'Signal Source', defval = 'Wick', options = ['Wick', 'Close'], tooltip = 'Choose the source for cross signals: "Wick" (high/low) or "Close". Free Bars will not be affected.', group = group_signals, inline = "2")
+signalBand = input.string(title = 'Signal Band', defval = 'Inner', options = ['Inner', 'Outer'], tooltip = 'Signal Band: Which band to use for signals.\nSignal Source: "Wick" (high/low) or "Close".', group = group_signals, inline = "2")
+signalSource = input.string(title = 'Signal Source', defval = 'Wick', options = ['Wick', 'Close'], group = group_signals, inline = "2")
 
 // Momentum Coloring
 group_coloring = "Momentum Coloring"
 maxMomentumBars = input.int(title = 'Max Momentum Bars', defval = 5, minval = 1, tooltip = 'The number of bars at which momentum coloring reaches its peak intensity. After this many bars, the color will stay constant.', group = group_coloring)
-upMomentumColor = input.color(title = 'Up', defval = color.new(#ee5e48, 0), tooltip = 'Base color for upward momentum signals.', group = group_coloring, inline = "1")
-downMomentumColor = input.color(title = 'Down', defval = color.new(#25bc3e, 0), tooltip = 'Base color for downward momentum signals.', group = group_coloring, inline = "1")
+upMomentumColor = input.color(title = 'Up', defval = color.new(#ee5e48, 0), tooltip = 'Base colors for upward and downward momentum signals.', group = group_coloring, inline = "1")
+downMomentumColor = input.color(title = 'Down', defval = color.new(#25bc3e, 0), group = group_coloring, inline = "1")
 
 // Squeeze Detector
 group_squeeze = "Squeeze Detector"
 showSqueeze = input.bool(title = 'Show Squeeze?', defval = true, tooltip = 'Highlights periods of low volatility (a "squeeze"), which can often precede significant price movements.', group = group_squeeze)
-squeezeLength = input.int(title = 'Lookback', defval = 200, minval = 1, tooltip = 'The historical lookback period for calculating the bandwidth percentile rank.', group = group_squeeze, inline = "1")
-squeezeThresh = input.float(title = 'Percentile', defval = 5.0, minval = 0.1, maxval = 100.0, step = 0.1, tooltip = 'The percentile threshold below which a squeeze is triggered. For example a value of 5 means the squeeze is active when bandwidth is in the bottom 5% of its historical range.', group = group_squeeze, inline = "1")
+squeezeLength = input.int(title = 'Lookback', defval = 200, minval = 1, tooltip = 'Lookback: Historical period for bandwidth percentile.\nPercentile: The threshold to trigger a squeeze.', group = group_squeeze, inline = "1")
+squeezeThresh = input.float(title = 'Percentile', defval = 5.0, minval = 0.1, maxval = 100.0, step = 0.1, group = group_squeeze, inline = "1")
 squeezeColorInput = input.color(title = 'Squeeze Color', defval = color.new(color.gray, 60), tooltip = 'Color for the squeeze intensity. A gradient will be applied.', group = group_squeeze)
 
 // Calculate Keltner Bands
