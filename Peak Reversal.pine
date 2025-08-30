@@ -11,8 +11,8 @@ indicator('Peak Reversal v3', shorttitle = 'Peak Reversal', overlay = true)
 // Keltner Channel Settings
 group_keltner = "Keltner Channel Settings"
 maType = input.string(title = 'MA Type', defval = 'EMA', options = ['EMA', 'SMA', 'RMA', 'VMA', 'HMA'], tooltip = 'The type of moving average to use for the Keltner Channel basis.', group = group_keltner)
-keltnerEMAlength = input.int(title = 'MA Length', defval = 20, minval = 1, tooltip = 'The length of the MA used for the Keltner Channels. Default = 20', group = group_keltner)
-atrLength = input.int(title = 'ATR Length', defval = 14, minval = 1, tooltip = 'The length of the ATR used for the Keltner Channels. Default = 14', group = group_keltner)
+keltnerEMAlength = input.int(title = 'MA Length', defval = 20, minval = 1, tooltip = 'The length of the MA used for the Keltner Channels.', group = group_keltner)
+atrLength = input.int(title = 'ATR Length', defval = 14, minval = 1, tooltip = 'The length of the ATR used for the Keltner Channels.', group = group_keltner)
 innerBandMultiplier = input.float(title = 'Inner Band Multiplier', defval = 2, minval = 0.1, step = 0.25, group = group_keltner)
 outerBandMultiplier = input.float(title = 'Outer Band Multiplier', defval = 3, minval = 0.1, step = 0.25, group = group_keltner)
 
@@ -34,8 +34,8 @@ signalSource = input.string(title = 'Signal Source', defval = 'Wick', options = 
 // Momentum Coloring
 group_coloring = "Momentum Coloring"
 maxMomentumBars = input.int(title = 'Max Momentum Bars', defval = 5, minval = 1, tooltip = 'The number of bars at which momentum coloring reaches its peak intensity. After this many bars, the color will stay constant.', group = group_coloring)
-upMomentumColor = input.color(title = 'Up Momentum Color', defval = color.new(#b71c1c, 0), tooltip = 'Base color for upward momentum signals.', group = group_coloring)
-downMomentumColor = input.color(title = 'Down Momentum Color', defval = color.new(#1b5e20, 0), tooltip = 'Base color for downward momentum signals.', group = group_coloring)
+upMomentumColor = input.color(title = 'Up Momentum Color', defval = color.new(#ee5e48, 0), tooltip = 'Base color for upward momentum signals.', group = group_coloring)
+downMomentumColor = input.color(title = 'Down Momentum Color', defval = color.new(#25bc3e, 0), tooltip = 'Base color for downward momentum signals.', group = group_coloring)
 
 // Squeeze Detector
 group_squeeze = "Squeeze Detector"
