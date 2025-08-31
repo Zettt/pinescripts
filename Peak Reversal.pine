@@ -21,21 +21,18 @@ group_display = "Display Settings"
 showMeanEMA = input.bool(title = 'Show Mean EMA?', defval = true, group = group_display, inline = "1")
 showInnerBand = input.bool(title = 'Inner Band?', defval = true, group = group_display, inline = "1")
 showOuterBand = input.bool(title = 'Outer Band?', defval = false, group = group_display, tooltip = 'Allows to display the mean or the bands individually.', inline = "1")
-showDeviations = input.bool(title = 'Show Mean Deviations?', defval = true, tooltip = 'Indicates when candles start going outside the bands. The more candles outside the bands, the likelier a return to the mean becomes.', group = group_display, inline = "3")
 
-// Signal Settings
-group_signals = "Signal Settings"
-showOnlyFirstSignal = input.bool(title = 'Show Only First Signal', defval = true, tooltip = 'If checked, only the first signal after a reset will be shown.', group = group_signals)
-showBandCross = input.bool(title = 'Band Crosses?', defval = true, tooltip = 'Show when candles cross bands.', group = group_signals, inline = "1")
-showFreeBars = input.bool(title = 'Free Bars?', defval = false, tooltip = 'Highlights bars where the entire candle is outside of the selected band, which can indicate extreme momentum.', group = group_signals, inline = "1")
-signalBand = input.string(title = 'Signal Band', defval = 'Inner', options = ['Inner', 'Outer'], tooltip = 'Signal Band: Which band to use for signals.\nSignal Source: "Wick" (high/low) or "Close".', group = group_signals, inline = "2")
-signalSource = input.string(title = 'Signal Source', defval = 'Wick', options = ['Wick', 'Close'], group = group_signals, inline = "2")
-
-// Momentum Coloring
-group_coloring = "Momentum Coloring"
-maxMomentumBars = input.int(title = 'Max Momentum Bars', defval = 5, minval = 1, tooltip = 'The number of bars at which momentum coloring reaches its peak intensity. After this many bars, the color will stay constant.', group = group_coloring)
-upMomentumColor = input.color(title = 'Up', defval = color.new(#ee5e48, 0), tooltip = 'Base colors for upward and downward momentum signals.', group = group_coloring, inline = "1")
-downMomentumColor = input.color(title = 'Down', defval = color.new(#25bc3e, 0), group = group_coloring, inline = "1")
+// Reversal & Momentum Settings
+group_reversal_momentum = "Reversal & Momentum Settings"
+showOnlyFirstSignal = input.bool(title = 'Show Only First Signal', defval = true, tooltip = 'If checked, only the first signal after a reset will be shown.', group = group_reversal_momentum)
+showBandCross = input.bool(title = 'Band Crosses?', defval = true, group = group_reversal_momentum, inline = "1")
+showFreeBars = input.bool(title = 'Free Bars?', defval = false, tooltip = 'Band Cross: Show when candle, either wick or close, start crossing the bands.\nFree Bar: When the entire candle is outside of the selected band, which can indicate extreme momentum.', group = group_reversal_momentum, inline = "1")
+showDeviations = input.bool(title = 'Show Mean Deviations?', defval = true, tooltip = 'Indicates when candles start going outside the bands (momentum bars). The more candles outside the bands, the likelier a return to the mean becomes.', group = group_reversal_momentum)
+signalBand = input.string(title = 'Signal Band', defval = 'Inner', options = ['Inner', 'Outer'], tooltip = 'Signal Band: Which band to use for signals.\nSignal Source: "Wick" (high/low) or "Close".', group = group_reversal_momentum, inline = "2")
+signalSource = input.string(title = 'Signal Source', defval = 'Wick', options = ['Wick', 'Close'], group = group_reversal_momentum, inline = "2")
+maxMomentumBars = input.int(title = 'Max Momentum Bars', defval = 5, minval = 1, tooltip = 'The number of bars at which momentum coloring reaches its peak intensity. After this many bars, the color will stay constant.', group = group_reversal_momentum)
+upMomentumColor = input.color(title = 'Up', defval = color.new(#ee5e48, 0), tooltip = 'Base colors for upward and downward momentum signals.', group = group_reversal_momentum, inline = "3")
+downMomentumColor = input.color(title = 'Down', defval = color.new(#25bc3e, 0), group = group_reversal_momentum, inline = "3")
 
 // Squeeze Detector
 group_squeeze = "Squeeze Detector"
