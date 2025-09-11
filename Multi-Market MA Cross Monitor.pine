@@ -1,0 +1,155 @@
+//@version=6
+indicator('Multi-Market MA Cross Monitor', shorttitle = 'MA Cross Monitor', overlay = true)
+
+// Input parameters for MA lengths
+ema1_len = input.int(20, 'EMA 1 Length', minval = 1)
+ema2_len = input.int(50, 'EMA 2 Length', minval = 1)
+ema3_len = input.int(200, 'EMA 3 Length', minval = 1)
+
+// Input symbols for 10 markets
+sym1 = input.symbol('BINANCE:BTCUSDT', 'Market 1')
+sym2 = input.symbol('BINANCE:ETHUSDT', 'Market 2')
+sym3 = input.symbol('BINANCE:ADAUSDT', 'Market 3')
+sym4 = input.symbol('BINANCE:SOLUSDT', 'Market 4')
+sym5 = input.symbol('BINANCE:DOTUSDT', 'Market 5')
+sym6 = input.symbol('BINANCE:AVAXUSDT', 'Market 6')
+sym7 = input.symbol('BINANCE:LINKUSDT', 'Market 7')
+sym8 = input.symbol('BINANCE:MATICUSDT', 'Market 8')
+sym9 = input.symbol('BINANCE:UNIUSDT', 'Market 9')
+sym10 = input.symbol('BINANCE:AAVEUSDT', 'Market 10')
+
+// Get close prices for each symbol (global scope)
+close1 = request.security(sym1, timeframe.period, close)
+close2 = request.security(sym2, timeframe.period, close)
+close3 = request.security(sym3, timeframe.period, close)
+close4 = request.security(sym4, timeframe.period, close)
+close5 = request.security(sym5, timeframe.period, close)
+close6 = request.security(sym6, timeframe.period, close)
+close7 = request.security(sym7, timeframe.period, close)
+close8 = request.security(sym8, timeframe.period, close)
+close9 = request.security(sym9, timeframe.period, close)
+close10 = request.security(sym10, timeframe.period, close)
+
+// Calculate EMAs and statuses for each symbol (global scope)
+// Market 1
+ema1_1 = ta.ema(close1, ema1_len)
+ema2_1 = ta.ema(close1, ema2_len)
+ema3_1 = ta.ema(close1, ema3_len)
+status1_1 = na(close1) or na(ema1_1) or na(ema2_1) ? 'N/A' : ''
+status1_2 = na(close1) or na(ema2_1) or na(ema3_1) ? 'N/A' : ''
+
+// Market 2
+ema1_2 = ta.ema(close2, ema1_len)
+ema2_2 = ta.ema(close2, ema2_len)
+ema3_2 = ta.ema(close2, ema3_len)
+status2_1 = na(close2) or na(ema1_2) or na(ema2_2) ? 'N/A' : ''
+status2_2 = na(close2) or na(ema2_2) or na(ema3_2) ? 'N/A' : ''
+
+// Market 3
+ema1_3 = ta.ema(close3, ema1_len)
+ema2_3 = ta.ema(close3, ema2_len)
+ema3_3 = ta.ema(close3, ema3_len)
+status3_1 = na(close3) or na(ema1_3) or na(ema2_3) ? 'N/A' : ''
+status3_2 = na(close3) or na(ema2_3) or na(ema3_3) ? 'N/A' : ''
+
+// Market 4
+ema1_4 = ta.ema(close4, ema1_len)
+ema2_4 = ta.ema(close4, ema2_len)
+ema3_4 = ta.ema(close4, ema3_len)
+status4_1 = na(close4) or na(ema1_4) or na(ema2_4) ? 'N/A' : ''
+status4_2 = na(close4) or na(ema2_4) or na(ema3_4) ? 'N/A' : ''
+
+// Market 5
+ema1_5 = ta.ema(close5, ema1_len)
+ema2_5 = ta.ema(close5, ema2_len)
+ema3_5 = ta.ema(close5, ema3_len)
+status5_1 = na(close5) or na(ema1_5) or na(ema2_5) ? 'N/A' : ''
+status5_2 = na(close5) or na(ema2_5) or na(ema3_5) ? 'N/A' : ''
+
+// Market 6
+ema1_6 = ta.ema(close6, ema1_len)
+ema2_6 = ta.ema(close6, ema2_len)
+ema3_6 = ta.ema(close6, ema3_len)
+status6_1 = na(close6) or na(ema1_6) or na(ema2_6) ? 'N/A' : ''
+status6_2 = na(close6) or na(ema2_6) or na(ema3_6) ? 'N/A' : ''
+
+// Market 7
+ema1_7 = ta.ema(close7, ema1_len)
+ema2_7 = ta.ema(close7, ema2_len)
+ema3_7 = ta.ema(close7, ema3_len)
+status7_1 = na(close7) or na(ema1_7) or na(ema2_7) ? 'N/A' : ''
+status7_2 = na(close7) or na(ema2_7) or na(ema3_7) ? 'N/A' : ''
+
+// Market 8
+ema1_8 = ta.ema(close8, ema1_len)
+ema2_8 = ta.ema(close8, ema2_len)
+ema3_8 = ta.ema(close8, ema3_len)
+status8_1 = na(close8) or na(ema1_8) or na(ema2_8) ? 'N/A' : ''
+status8_2 = na(close8) or na(ema2_8) or na(ema3_8) ? 'N/A' : ''
+
+// Market 9
+ema1_9 = ta.ema(close9, ema1_len)
+ema2_9 = ta.ema(close9, ema2_len)
+ema3_9 = ta.ema(close9, ema3_len)
+status9_1 = na(close9) or na(ema1_9) or na(ema2_9) ? 'N/A' : ''
+status9_2 = na(close9) or na(ema2_9) or na(ema3_9) ? 'N/A' : ''
+
+// Market 10
+ema1_10 = ta.ema(close10, ema1_len)
+ema2_10 = ta.ema(close10, ema2_len)
+ema3_10 = ta.ema(close10, ema3_len)
+status10_1 = na(close10) or na(ema1_10) or na(ema2_10) ? 'N/A' : ''
+status10_2 = na(close10) or na(ema2_10) or na(ema3_10) ? 'N/A' : ''
+
+// Array of symbols for market names
+symbols = array.from(sym1, sym2, sym3, sym4, sym5, sym6, sym7, sym8, sym9, sym10)
+
+// Arrays of status variables for easy access
+status1_array = array.from(status1_1, status2_1, status3_1, status4_1, status5_1, status6_1, status7_1, status8_1, status9_1, status10_1)
+status2_array = array.from(status1_2, status2_2, status3_2, status4_2, status5_2, status6_2, status7_2, status8_2, status9_2, status10_2)
+
+// Create table
+var table info_table = table.new(position.bottom_left, 3, 11, bgcolor = color.white, border_width = 1, border_color = color.gray)
+
+if barstate.islast
+    // Header
+    table.cell(info_table, 0, 0, 'Market', text_color = color.black, bgcolor = color.silver)
+    table.cell(info_table, 1, 0, 'EMA 1/EMA 2', text_color = color.black, bgcolor = color.silver)
+    table.cell(info_table, 2, 0, 'EMA 2/EMA 3', text_color = color.black, bgcolor = color.silver)
+
+    // Rows for each market
+    for i = 0 to 9 by 1
+        // Get symbol for market name
+        sym = i == 0 ? sym1 : i == 1 ? sym2 : i == 2 ? sym3 : i == 3 ? sym4 : i == 4 ? sym5 : i == 5 ? sym6 : i == 6 ? sym7 : i == 7 ? sym8 : i == 8 ? sym9 : sym10
+
+        // Market name (simple, take last part)
+        market_name = array.get(str.split(sym, ':'), 1)
+
+        // Determine colors based on MA comparisons for each market
+        color1 = switch i
+            0 => na(close1) or na(ema1_1) or na(ema2_1) ? color.white : ema1_1 > ema2_1 ? color.green : ema1_1 < ema2_1 ? color.red : color.gray
+            1 => na(close2) or na(ema1_2) or na(ema2_2) ? color.white : ema1_2 > ema2_2 ? color.green : ema1_2 < ema2_2 ? color.red : color.gray
+            2 => na(close3) or na(ema1_3) or na(ema2_3) ? color.white : ema1_3 > ema2_3 ? color.green : ema1_3 < ema2_3 ? color.red : color.gray
+            3 => na(close4) or na(ema1_4) or na(ema2_4) ? color.white : ema1_4 > ema2_4 ? color.green : ema1_4 < ema2_4 ? color.red : color.gray
+            4 => na(close5) or na(ema1_5) or na(ema2_5) ? color.white : ema1_5 > ema2_5 ? color.green : ema1_5 < ema2_5 ? color.red : color.gray
+            5 => na(close6) or na(ema1_6) or na(ema2_6) ? color.white : ema1_6 > ema2_6 ? color.green : ema1_6 < ema2_6 ? color.red : color.gray
+            6 => na(close7) or na(ema1_7) or na(ema2_7) ? color.white : ema1_7 > ema2_7 ? color.green : ema1_7 < ema2_7 ? color.red : color.gray
+            7 => na(close8) or na(ema1_8) or na(ema2_8) ? color.white : ema1_8 > ema2_8 ? color.green : ema1_8 < ema2_8 ? color.red : color.gray
+            8 => na(close9) or na(ema1_9) or na(ema2_9) ? color.white : ema1_9 > ema2_9 ? color.green : ema1_9 < ema2_9 ? color.red : color.gray
+            => na(close10) or na(ema1_10) or na(ema2_10) ? color.white : ema1_10 > ema2_10 ? color.green : ema1_10 < ema2_10 ? color.red : color.gray
+
+        color2 = switch i
+            0 => na(close1) or na(ema2_1) or na(ema3_1) ? color.white : ema2_1 > ema3_1 ? color.green : ema2_1 < ema3_1 ? color.red : color.gray
+            1 => na(close2) or na(ema2_2) or na(ema3_2) ? color.white : ema2_2 > ema3_2 ? color.green : ema2_2 < ema3_2 ? color.red : color.gray
+            2 => na(close3) or na(ema2_3) or na(ema3_3) ? color.white : ema2_3 > ema3_3 ? color.green : ema2_3 < ema3_3 ? color.red : color.gray
+            3 => na(close4) or na(ema2_4) or na(ema3_4) ? color.white : ema2_4 > ema3_4 ? color.green : ema2_4 < ema3_4 ? color.red : color.gray
+            4 => na(close5) or na(ema2_5) or na(ema3_5) ? color.white : ema2_5 > ema3_5 ? color.green : ema2_5 < ema3_5 ? color.red : color.gray
+            5 => na(close6) or na(ema2_6) or na(ema3_6) ? color.white : ema2_6 > ema3_6 ? color.green : ema2_6 < ema3_6 ? color.red : color.gray
+            6 => na(close7) or na(ema2_7) or na(ema3_7) ? color.white : ema2_7 > ema3_7 ? color.green : ema2_7 < ema3_7 ? color.red : color.gray
+            7 => na(close8) or na(ema2_8) or na(ema3_8) ? color.white : ema2_8 > ema3_8 ? color.green : ema2_8 < ema3_8 ? color.red : color.gray
+            8 => na(close9) or na(ema2_9) or na(ema3_9) ? color.white : ema2_9 > ema3_9 ? color.green : ema2_9 < ema3_9 ? color.red : color.gray
+            => na(close10) or na(ema2_10) or na(ema3_10) ? color.white : ema2_10 > ema3_10 ? color.green : ema2_10 < ema3_10 ? color.red : color.gray
+
+        table.cell(info_table, 0, i + 1, market_name, text_color = color.black)
+        table.cell(info_table, 1, i + 1, '', text_color = color.black, bgcolor = color1)
+        table.cell(info_table, 2, i + 1, '', text_color = color.black, bgcolor = color2)
