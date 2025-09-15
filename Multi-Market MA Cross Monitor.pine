@@ -6,6 +6,9 @@ ema1_len = input.int(20, 'EMA 1 Length', minval = 1)
 ema2_len = input.int(50, 'EMA 2 Length', minval = 1)
 ema3_len = input.int(200, 'EMA 3 Length', minval = 1)
 
+// Fixed timeframe input for the monitor (default 12H)
+monitor_tf = input.timeframe('720', 'Monitor Timeframe')
+
 // Input symbols for 10 markets
 sym1 = input.symbol('BINANCE:BTCUSDT', 'Market 1')
 sym2 = input.symbol('BINANCE:ETHUSDT', 'Market 2')
@@ -18,17 +21,17 @@ sym8 = input.symbol('BINANCE:MATICUSDT', 'Market 8')
 sym9 = input.symbol('BINANCE:UNIUSDT', 'Market 9')
 sym10 = input.symbol('BINANCE:AAVEUSDT', 'Market 10')
 
-// Get close prices for each symbol (global scope)
-close1 = request.security(sym1, timeframe.period, close)
-close2 = request.security(sym2, timeframe.period, close)
-close3 = request.security(sym3, timeframe.period, close)
-close4 = request.security(sym4, timeframe.period, close)
-close5 = request.security(sym5, timeframe.period, close)
-close6 = request.security(sym6, timeframe.period, close)
-close7 = request.security(sym7, timeframe.period, close)
-close8 = request.security(sym8, timeframe.period, close)
-close9 = request.security(sym9, timeframe.period, close)
-close10 = request.security(sym10, timeframe.period, close)
+// Get close prices for each symbol (use monitor_tf)
+close1 = request.security(sym1, monitor_tf, close)
+close2 = request.security(sym2, monitor_tf, close)
+close3 = request.security(sym3, monitor_tf, close)
+close4 = request.security(sym4, monitor_tf, close)
+close5 = request.security(sym5, monitor_tf, close)
+close6 = request.security(sym6, monitor_tf, close)
+close7 = request.security(sym7, monitor_tf, close)
+close8 = request.security(sym8, monitor_tf, close)
+close9 = request.security(sym9, monitor_tf, close)
+close10 = request.security(sym10, monitor_tf, close)
 
 // Calculate EMAs and statuses for each symbol (global scope)
 // Market 1
@@ -153,3 +156,4 @@ if barstate.islast
         table.cell(info_table, 0, i + 1, market_name, text_color = color.black)
         table.cell(info_table, 1, i + 1, '', text_color = color.black, bgcolor = color1)
         table.cell(info_table, 2, i + 1, '', text_color = color.black, bgcolor = color2)
+
