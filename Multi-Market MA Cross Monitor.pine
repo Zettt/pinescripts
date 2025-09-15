@@ -114,8 +114,8 @@ var table info_table = table.new(position.bottom_left, 3, 11, bgcolor = color.wh
 if barstate.islast
     // Header
     table.cell(info_table, 0, 0, 'Market', text_color = color.black, bgcolor = color.silver)
-    table.cell(info_table, 1, 0, 'EMA 1/EMA 2', text_color = color.black, bgcolor = color.silver)
-    table.cell(info_table, 2, 0, 'EMA 2/EMA 3', text_color = color.black, bgcolor = color.silver)
+    table.cell(info_table, 1, 0, 'EMA 1/2', text_color = color.black, bgcolor = color.silver)
+    table.cell(info_table, 2, 0, 'EMA 2/3', text_color = color.black, bgcolor = color.silver)
 
     // Rows for each market
     for i = 0 to 9 by 1
